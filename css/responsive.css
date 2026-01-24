@@ -1,0 +1,114 @@
+/* Адаптивні стилі */
+@media (max-width: 1200px) {
+    .nav {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+        gap: 1rem;
+    }
+
+    .search-container {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+    }
+
+    .nav-links {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --header-height: 160px;
+    }
+
+    .header {
+        height: auto;
+        min-height: var(--header-height);
+    }
+
+    .nav {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+    }
+
+    .nav-links {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .search-container {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .models-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .scroll-btn {
+        display: none;
+    }
+
+    /* Виправлення для категорій на мобільних */
+    .categories-scrollbar {
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .models-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .model-actions {
+        flex-direction: column;
+    }
+
+    .modal-details {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .filter-controls {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .filter-btn {
+        flex-shrink: 0;
+    }
+
+    /* Виправлення для категорій на малих екранах */
+    .categories-scrollbar {
+        padding: 0 15px;
+    }
+
+    .categories-container {
+        scroll-padding: 0 15px;
+    }
+}

@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3DPrint Gallery | Бібліотека моделей для 3D друку</title>
+
+    <!-- Підключення CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖨️</text></svg>"
+    />
+  </head>
+  <body class="dark-mode">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <nav class="nav">
+          <a href="#" class="logo">
+            <i class="fas fa-cube logo-icon"></i>
+            <span>3DPrint Gallery</span>
+          </a>
+
+          <div class="nav-links">
+            <a href="#" class="nav-link active" data-section="main">Головна</a>
+            <a href="#models" class="nav-link" data-section="models">Моделі</a>
+            <a
+              href="#favorites"
+              class="nav-link favorites-link"
+              data-section="favorites"
+            >
+              <i class="far fa-heart"></i>
+              <span class="fav-count">0</span>
+            </a>
+          </div>
+
+          <div class="search-container">
+            <div class="search-box">
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Пошук моделей..."
+              />
+              <button class="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="nav-actions">
+            <button class="admin-categories-btn" title="Управління категоріями">
+              <i class="fas fa-sliders-h"></i>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Categories Scrollbar -->
+        <div class="categories-scrollbar">
+          <div class="categories-container" id="categories-scrollbar">
+            <!-- Categories will be loaded by JS -->
+          </div>
+          <button class="scroll-btn scroll-left">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="scroll-btn scroll-right">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <!-- Models Grid -->
+        <section id="models" class="models-section">
+          <div class="section-header">
+            <h2 class="section-title">Всі моделі</h2>
+            <div class="filter-controls">
+              <button class="filter-btn active" data-filter="all">Всі</button>
+              <button class="filter-btn" data-filter="featured">
+                Популярні
+              </button>
+              <button class="filter-btn" data-filter="new">Новинки</button>
+            </div>
+          </div>
+          <div class="models-grid" id="models-container">
+            <!-- Models will be loaded by JS -->
+          </div>
+          <div class="load-more">
+            <button id="load-more-btn" class="btn btn-secondary">
+              <i class="fas fa-plus"></i> Завантажити ще
+            </button>
+          </div>
+        </section>
+
+        <!-- Favorites Section -->
+        <section id="favorites" class="favorites-section hidden">
+          <div class="section-header">
+            <h2 class="section-title">Обрані моделі</h2>
+            <button id="clear-favorites" class="btn-text">Очистити все</button>
+          </div>
+          <div class="favorites-empty" id="favorites-empty">
+            <i class="far fa-heart"></i>
+            <h3>Тут поки порожньо</h3>
+            <p>Додавайте моделі до обраних, натискаючи на сердечко</p>
+          </div>
+          <div class="favorites-grid" id="favorites-container">
+            <!-- Favorite models will appear here -->
+          </div>
+        </section>
+
+        <!-- ===== НОВА СЕКЦІЯ: АДМІН-ПАНЕЛЬ ===== -->
+        <section id="admin-section" class="admin-section hidden">
+          <div class="section-header">
+            <h2 class="section-title">Адмін-панель</h2>
+            <button id="admin-logout-btn" class="btn btn-secondary">
+              <i class="fas fa-sign-out-alt"></i> Вийти
+            </button>
+          </div>
+
+          <div class="admin-welcome" id="admin-welcome">
+            <p>
+              Ласкаво просимо до адмін-панелі! Тут ви можете керувати контентом.
+            </p>
+          </div>
+
+          <div class="admin-content">
+            <div class="admin-stats">
+              <h3>Статистика системи</h3>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="fas fa-cube"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="stat-models-count">0</span>
+                    <span class="stat-label">Моделей в базі</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="fas fa-heart"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="stat-favorites-count">0</span>
+                    <span class="stat-label">В обраному</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="fas fa-layer-group"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="stat-categories-count">0</span>
+                    <span class="stat-label">Категорій</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="fas fa-download"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="stat-total-downloads">0</span>
+                    <span class="stat-label">Завантажень</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-actions">
+              <h3>Швидкі дії</h3>
+              <div class="actions-grid">
+                <button class="action-btn" id="admin-manage-categories">
+                  <i class="fas fa-sliders-h"></i>
+                  <span>Управління категоріями</span>
+                </button>
+                <button class="action-btn" id="admin-add-model">
+                  <i class="fas fa-plus-circle"></i>
+                  <span>Додати модель</span>
+                </button>
+                <button class="action-btn" id="admin-backup-data">
+                  <i class="fas fa-download"></i>
+                  <span>Резервна копія</span>
+                </button>
+                <button class="action-btn" id="admin-change-password">
+                  <i class="fas fa-key"></i>
+                  <span>Змінити пароль</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Modal for Model Details -->
+    <div id="model-modal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-body" id="modal-body">
+          <!-- Content will be filled by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Categories Management -->
+    <div id="categories-modal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-body">
+          <h2 class="modal-title">Управління категоріями</h2>
+          <div class="categories-manager">
+            <div id="categories-list-container">
+              <!-- Categories for editing will be loaded here -->
+            </div>
+            <div
+              class="modal-actions"
+              style="justify-content: space-between; margin-top: 20px"
+            >
+              <button id="restore-default-categories" class="btn btn-secondary">
+                <i class="fas fa-undo"></i> Відновити стандартні
+              </button>
+              <div>
+                <button id="add-category-btn" class="btn btn-secondary">
+                  <i class="fas fa-plus"></i> Додати категорію
+                </button>
+                <button id="save-categories-btn" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Зберегти зміни
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== НОВЕ МОДАЛЬНЕ ВІКНО: АВТОРИЗАЦІЯ ===== -->
+    <div id="auth-modal" class="modal">
+      <div class="modal-content" style="max-width: 500px">
+        <button class="modal-close" id="auth-modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-body" id="auth-modal-body">
+          <!-- Форма входу -->
+          <div id="login-form-container">
+            <h2 class="modal-title">Вхід до адмін-панелі</h2>
+            <p class="modal-description">
+              Введіть пароль для доступу до адмін-панелі
+            </p>
+
+            <div class="auth-form">
+              <div class="form-group">
+                <label for="login-password" class="form-label">Пароль</label>
+                <input
+                  type="password"
+                  id="login-password"
+                  class="form-input"
+                  placeholder="Введіть пароль"
+                  autocomplete="current-password"
+                />
+              </div>
+
+              <div
+                id="login-error"
+                class="error-message"
+                style="display: none"
+              ></div>
+
+              <div
+                id="login-attempts-info"
+                class="attempts-info"
+                style="display: none"
+              >
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Залишилось спроб: <span id="attempts-left">3</span></span>
+              </div>
+
+              <div class="form-actions">
+                <button id="login-submit-btn" class="btn btn-primary">
+                  <i class="fas fa-sign-in-alt"></i> Увійти
+                </button>
+                <button id="show-reset-form-btn" class="btn btn-text">
+                  Забули пароль?
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Форма скидання пароля -->
+          <div id="reset-password-form" style="display: none">
+            <h2 class="modal-title">Скидання пароля</h2>
+            <p class="modal-description">
+              Відповість на секретне питання для скидання пароля
+            </p>
+
+            <div class="auth-form">
+              <div class="security-question">
+                <p><strong>Секретне питання:</strong></p>
+                <p id="security-question-text">Який ваш улюблений колір?</p>
+              </div>
+
+              <div class="form-group">
+                <label for="reset-security-answer" class="form-label"
+                  >Відповідь</label
+                >
+                <input
+                  type="text"
+                  id="reset-security-answer"
+                  class="form-input"
+                  placeholder="Введіть відповідь"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="reset-new-password" class="form-label"
+                  >Новий пароль</label
+                >
+                <input
+                  type="password"
+                  id="reset-new-password"
+                  class="form-input"
+                  placeholder="Новий пароль"
+                  autocomplete="new-password"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="reset-confirm-password" class="form-label"
+                  >Підтвердіть пароль</label
+                >
+                <input
+                  type="password"
+                  id="reset-confirm-password"
+                  class="form-input"
+                  placeholder="Підтвердіть пароль"
+                  autocomplete="new-password"
+                />
+              </div>
+
+              <div
+                id="reset-error"
+                class="error-message"
+                style="display: none"
+              ></div>
+
+              <div class="form-actions">
+                <button id="reset-submit-btn" class="btn btn-primary">
+                  <i class="fas fa-redo"></i> Скинути пароль
+                </button>
+                <button id="back-to-login-btn" class="btn btn-text">
+                  <i class="fas fa-arrow-left"></i> Назад до входу
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-col">
+            <a href="#" class="logo">
+              <i class="fas fa-cube logo-icon"></i>
+              <span>3DPrint Gallery</span>
+            </a>
+            <p class="footer-text">
+              Найбільша бібліотека готових до друку 3D моделей
+            </p>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-title">Формати</h3>
+            <a href="#" class="footer-link">STL</a>
+            <a href="#" class="footer-link">3MF</a>
+            <a href="#" class="footer-link">OBJ</a>
+            <a href="#" class="footer-link">STEP</a>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-title">Посилання</h3>
+            <a href="#" class="footer-link">Про нас</a>
+            <a href="#" class="footer-link">Умови</a>
+            <a href="#" class="footer-link">Контакти</a>
+            <a href="#" class="footer-link">Допомога</a>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-title">Соцмережі</h3>
+            <div class="social-links">
+              <a href="#" class="social-link"
+                ><i class="fab fa-telegram"></i> Telegram</a
+              >
+              <a href="#" class="social-link"
+                ><i class="fab fa-github"></i> GitHub</a
+              >
+              <a href="#" class="social-link"
+                ><i class="fab fa-youtube"></i> YouTube</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 3DPrint Gallery. Усі права захищені.</p>
+          <p>Для особистого використання</p>
+        </div>
+      </div>
+    </footer>
+    <script src="js/main.js" type="module"></script>
+  </body>
+</html>

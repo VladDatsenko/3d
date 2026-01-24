@@ -1,0 +1,72 @@
+/* Змінні та теми */
+:root {
+    /* Темна тема за замовчуванням */
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-card: #1a1a25;
+    --bg-accent: #1e1e2e;
+
+    --text-primary: #e2e2f0;
+    --text-secondary: #8a8aa3;
+    --text-muted: #6a6a8a;
+
+    /* Кольори для градієнта (Razer зелені) */
+    --razer-green-light: #44d62c;
+    --razer-green-dark: #00a800;
+    --razer-green-neon: #44ff00;
+
+    /* Акцентні кольори */
+    --accent-primary: var(--razer-green-light);
+    --accent-secondary: #000000;
+    --accent-danger: #ff2a6d;
+
+    /* Градієнти */
+    --gradient-primary: linear-gradient(135deg, var(--razer-green-dark) 0%, var(--razer-green-light) 100%);
+    --gradient-secondary: linear-gradient(135deg, var(--razer-green-light) 0%, var(--razer-green-neon) 100%);
+    --gradient-card: linear-gradient(145deg, #1a1a25 0%, #222235 100%);
+    --gradient-category: linear-gradient(135deg, var(--razer-green-dark) 0%, var(--razer-green-light) 100%);
+
+    /* Тіні */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-neon: 0 0 15px rgba(68, 214, 44, 0.5), 0 0 30px rgba(68, 214, 44, 0.2);
+    --shadow-accent: 0 0 20px rgba(68, 214, 44, 0.6);
+
+    /* Радіуси */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --radius-full: 999px;
+
+    /* Переходи */
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Розміри */
+    --header-height: 140px;
+    --scrollbar-height: 48px;
+}
+
+.light-mode {
+    /* Світла тема */
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-accent: #f1f3f9;
+
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a6a;
+    --text-muted: #6a6a8a;
+
+    /* Світла версія Razer кольорів */
+    --razer-green-light: #2ea823;
+    --razer-green-dark: #1e7c1e;
+    --razer-green-neon: #2ea823;
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-neon: 0 0 15px rgba(46, 168, 35, 0.2);
+    --shadow-accent: 0 0 20px rgba(46, 168, 35, 0.3);
+}
