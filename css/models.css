@@ -36,6 +36,7 @@
     cursor: pointer;
     transition: var(--transition);
     color: var(--text-secondary);
+    position: relative;
 }
 
 .filter-btn:hover {
@@ -47,25 +48,22 @@
     background: var(--bg-card);
     border-color: var(--accent-primary);
     color: var(--accent-primary);
-
     /* ЯСКРАВЕ ПІДСВІТЛЕННЯ */
     box-shadow: var(--shadow-neon);
-
     /* ПОСИЛЕНИЙ ЕФЕКТ ПІДНЯТТЯ */
     transform: translateY(-3px);
+}
 
-    /* ЯСКРАВІШЕ ВНУТРІШНЄ СВІТІННЯ */
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: var(--radius-full);
-        box-shadow: inset 0 0 15px rgba(68, 255, 0, 0.25);
-        pointer-events: none;
-    }
+.filter-btn.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--radius-full);
+    box-shadow: inset 0 0 15px rgba(68, 255, 0, 0.25);
+    pointer-events: none;
 }
 
 /* Сітка моделей */
@@ -255,7 +253,7 @@
     box-shadow: 0 0 8px rgba(170, 255, 170, 0.3);
 }
 
-/* КНОПКА "STL" - ТАКА Ж ЯК РАНІШЕ */
+/* КНОПКА "STL" */
 .download-btn {
     background: var(--bg-accent);
     color: var(--accent-primary);

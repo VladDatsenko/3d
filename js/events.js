@@ -128,7 +128,7 @@ const EventHandlers = {
         // Фільтри
         if (DomElements.filterButtons && DomElements.filterButtons.length > 0) {
             DomElements.filterButtons.forEach(btn => {
-                if (btn && btn.dataset && btn.dataset.filter) {
+                if (btn && btn.dataset.filter) {
                     btn.addEventListener('click', () => {
                         const filter = btn.dataset.filter;
                         StateManager.setCurrentFilter(filter);
@@ -360,7 +360,7 @@ const EventHandlers = {
         setTimeout(() => {
             // Кнопка завантаження в модальному вікні
             const modalDownloadBtn = DomElements.modalBody?.querySelector('.download-btn');
-            if (modalDownloadBtn && modalDownloadBtn.dataset && modalDownloadBtn.dataset.id) {
+            if (modalDownloadBtn && modalDownloadBtn.dataset.id) {
                 modalDownloadBtn.addEventListener('click', () => {
                     ModelsManager.downloadModel(modelId);
                 });
@@ -368,7 +368,7 @@ const EventHandlers = {
             
             // Кнопка "Улюблене" в модальному вікні
             const modalFavoriteBtn = DomElements.modalBody?.querySelector('.toggle-favorite');
-            if (modalFavoriteBtn && modalFavoriteBtn.dataset && modalFavoriteBtn.dataset.id) {
+            if (modalFavoriteBtn && modalFavoriteBtn.dataset.id) {
                 modalFavoriteBtn.addEventListener('click', () => {
                     const state = StateManager.getState();
                     const isCurrentlyFavorite = state.favorites.includes(modelId);

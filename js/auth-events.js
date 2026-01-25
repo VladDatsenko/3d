@@ -663,8 +663,9 @@ const AuthEvents = {
             return;
         }
         
-        if (!image.startsWith('http')) {
-            this.showAddModelError('Будь ласка, введіть коректний URL зображення');
+        // ФІКС: Правильна валідація URL
+        if (!image.startsWith('http://') && !image.startsWith('https://')) {
+            this.showAddModelError('Будь ласка, введіть коректний URL зображення (має починатися з http:// або https://)');
             return;
         }
         

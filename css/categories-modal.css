@@ -229,7 +229,4 @@
     .icon-select-container {
         width: 100%;
     }
-}
-
-/* Видаляємо зайві стилі для admin-categories-btn тут, 
-   вони тепер в header.css */
+} 

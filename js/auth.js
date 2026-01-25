@@ -13,6 +13,9 @@ const AuthSystem = {
         currentSession: null
     },
 
+    // Інтервал для перевірки DevTools
+    devToolsInterval: null,
+
     // Ініціалізація системи
     init() {
         console.log('Ініціалізація системи автентифікації...');
@@ -185,6 +188,7 @@ const AuthSystem = {
 
     // Вихід з системи
     logout() {
+        this.cleanup();
         this.state.isAuthenticated = false;
         this.state.lastActivity = null;
         this.state.currentSession = null;
@@ -216,7 +220,7 @@ const AuthSystem = {
 
     // Відстеження активності
     setupActivityTracker() {
-        // Оновлюємо активність при взаємодії з сторінкою
+        // Оновлюємо активність при взаємодії з сторінкоу
         const activityEvents = ['click', 'keypress', 'mousemove', 'scroll'];
         activityEvents.forEach(event => {
             document.addEventListener(event, () => {
@@ -349,7 +353,15 @@ const AuthSystem = {
         };
 
         // Перевіряємо періодично
-        setInterval(devToolsCheck, 1000);
+        this.devToolsInterval = setInterval(devToolsCheck, 1000);
+    },
+
+    // Очищення ресурсів
+    cleanup() {
+        if (this.devToolsInterval) {
+            clearInterval(this.devToolsInterval);
+            this.devToolsInterval = null;
+        }
     }
 };
 
