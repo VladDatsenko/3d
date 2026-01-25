@@ -260,6 +260,57 @@
     font-size: 1.25rem;
 }
 
+/* ===== СТИЛІ ДЛЯ КНОПОК УВІЙТИ/ВИЙТИ ===== */
+#login-submit-btn,
+#admin-logout-btn {
+    background: var(--bg-accent) !important;
+    color: var(--accent-primary) !important;
+    border: 1px solid rgba(68, 255, 0, 0.3) !important;
+    box-shadow: 0 0 8px rgba(68, 255, 0, 0.2) !important;
+}
+
+#login-submit-btn:hover,
+#admin-logout-btn:hover {
+    background: rgba(68, 255, 0, 0.1) !important;
+    border-color: var(--accent-primary) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 0 12px rgba(68, 255, 0, 0.3) !important;
+}
+
+/* Кнопки "Скинути пароль" */
+#reset-submit-btn,
+#change-password-submit-btn,
+#add-model-submit-btn {
+    background: var(--bg-accent) !important;
+    color: var(--accent-primary) !important;
+    border: 1px solid rgba(68, 255, 0, 0.3) !important;
+    box-shadow: 0 0 8px rgba(68, 255, 0, 0.2) !important;
+}
+
+#reset-submit-btn:hover,
+#change-password-submit-btn:hover,
+#add-model-submit-btn:hover {
+    background: rgba(68, 255, 0, 0.1) !important;
+    border-color: var(--accent-primary) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 0 12px rgba(68, 255, 0, 0.3) !important;
+}
+
+/* Кнопки скасування */
+#add-model-cancel-btn,
+#change-password-cancel-btn {
+    background: var(--bg-card) !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+#add-model-cancel-btn:hover,
+#change-password-cancel-btn:hover {
+    background: var(--bg-accent) !important;
+    color: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
 /* Стилі для нових форм */
 .form-row {
     display: flex;
