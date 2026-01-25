@@ -23,6 +23,8 @@ const Utils = {
         
         if (type === 'error') {
             notification.style.background = '#ff2a6d';
+        } else if (type === 'warning') {
+            notification.style.background = '#ffc107';
         }
         
         document.body.appendChild(notification);
@@ -36,12 +38,30 @@ const Utils = {
     // Завантажити дані
     async loadData() {
         try {
+            // Спочатку спробувати завантажити з localStorage
+            const savedModels = localStorage.getItem('models_data');
+            if (savedModels) {
+                const parsedModels = JSON.parse(savedModels);
+                if (Array.isArray(parsedModels) && parsedModels.length > 0) {
+                    console.log('Завантажено моделі з localStorage:', parsedModels.length);
+                    return parsedModels;
+                }
+            }
+            
+            // Якщо немає в localStorage, завантажити з data.json
             const response = await fetch('data.json');
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             const data = await response.json();
-            return data.models || [];
+            const models = data.models || [];
+            
+            // Зберегти в localStorage для майбутнього використання
+            if (models.length > 0) {
+                localStorage.setItem('models_data', JSON.stringify(models));
+            }
+            
+            return models;
         } catch (error) {
             console.error('Error loading data:', error);
             return this.getFallbackData();
@@ -137,6 +157,22 @@ const Utils = {
     // Генерувати ID для нової категорії
     generateCategoryId() {
         return 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    },
+
+    // Генерувати ID для нової моделі
+    generateModelId() {
+        return 'model_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    },
+
+    // Зберегти моделі в localStorage
+    saveModels(models) {
+        try {
+            localStorage.setItem('models_data', JSON.stringify(models));
+            return true;
+        } catch (e) {
+            console.error('Error saving models:', e);
+            return false;
+        }
     }
 };
 

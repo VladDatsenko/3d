@@ -3,12 +3,13 @@ import { AuthSystem } from './auth.js';
 import { DomElements } from './dom-elements.js';
 import { UIManager } from './ui.js';
 import { Utils } from './utils.js';
+import { StateManager } from './state.js';
 
-// Обробники подій для автентифікації
+// Обробники подій для адмін-панелі
 const AuthEvents = {
-    // Ініціалізація обробників автентифікації
+    // Ініціалізація обробників адмін-панелі
     init() {
-        console.log('Ініціалізація обробників автентифікації...');
+        console.log('Ініціалізація обробників адмін-панелі...');
         
         this.setupAdminButton();
         this.setupLoginForm();
@@ -27,12 +28,15 @@ const AuthEvents = {
         
         // Перевірити та оновити інформацію про спроби
         this.updateLoginAttemptsInfo();
+        
+        // Додаткові обробники для нових функцій
+        this.setupAddModelModal();
+        this.setupChangePasswordModal();
+        this.setupBackupFunction();
     },
 
     // Налаштування кнопки адміна
     setupAdminButton() {
-        // Кнопка вже налаштована в events.js
-        // Оновлюємо її зовнішній вигляд
         this.updateAdminButton();
     },
 
@@ -46,9 +50,11 @@ const AuthEvents = {
         if (isAuthenticated) {
             adminBtn.innerHTML = '<i class="fas fa-user-cog"></i>';
             adminBtn.title = 'Адмін-панель';
+            adminBtn.classList.add('logged-in');
         } else {
             adminBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
             adminBtn.title = 'Вхід до адмін-панелі';
+            adminBtn.classList.remove('logged-in');
         }
     },
 
@@ -133,8 +139,6 @@ const AuthEvents = {
 
     // Налаштування модального вікна авторизації
     setupAuthModal() {
-        // Обробники вже в events.js
-        // Додаємо тільки обробник для форми
         const loginForm = document.getElementById('login-form-container');
         if (loginForm) {
             loginForm.addEventListener('click', (e) => {
@@ -429,6 +433,12 @@ const AuthEvents = {
                         <p>Остання активність: ${lastActivity}</p>
                     `;
                 }
+                
+                // Оновити статистику
+                this.updateAdminStats();
+                
+                // Заповнити категорії в формі додавання моделі
+                this.populateModelCategories();
             } else {
                 // Приховати адмін-панель
                 adminSection.classList.add('hidden');
@@ -481,7 +491,7 @@ const AuthEvents = {
         const addModelBtn = document.getElementById('admin-add-model');
         if (addModelBtn) {
             addModelBtn.addEventListener('click', () => {
-                Utils.showNotification('Функція додавання моделей скоро буде доступна', 'info');
+                this.showAddModelModal();
             });
         }
         
@@ -489,7 +499,7 @@ const AuthEvents = {
         const backupBtn = document.getElementById('admin-backup-data');
         if (backupBtn) {
             backupBtn.addEventListener('click', () => {
-                Utils.showNotification('Функція резервного копіювання скоро буде доступна', 'info');
+                this.createBackup();
             });
         }
         
@@ -497,8 +507,469 @@ const AuthEvents = {
         const changePasswordBtn = document.getElementById('admin-change-password');
         if (changePasswordBtn) {
             changePasswordBtn.addEventListener('click', () => {
-                Utils.showNotification('Функція зміни пароля скоро буде доступна', 'info');
+                this.showChangePasswordModal();
             });
+        }
+    },
+
+    // ===== НОВІ ФУНКЦІЇ =====
+
+    // Налаштування модального вікна додавання моделі
+    setupAddModelModal() {
+        const addModelModal = document.getElementById('add-model-modal');
+        if (!addModelModal) return;
+        
+        // Закриття по кліку на фон
+        addModelModal.addEventListener('click', (e) => {
+            if (e.target === addModelModal) {
+                this.closeAddModelModal();
+            }
+        });
+        
+        // Закриття по кнопці
+        const modalClose = addModelModal.querySelector('.modal-close');
+        if (modalClose) {
+            modalClose.addEventListener('click', () => {
+                this.closeAddModelModal();
+            });
+        }
+        
+        // Скасування
+        const cancelBtn = document.getElementById('add-model-cancel-btn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                this.closeAddModelModal();
+            });
+        }
+        
+        // ESC для закриття
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && addModelModal.classList.contains('show')) {
+                this.closeAddModelModal();
+            }
+        });
+        
+        // Обробка відправки форми
+        const submitBtn = document.getElementById('add-model-submit-btn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleAddModel();
+            });
+        }
+    },
+
+    // Показати модальне вікно додавання моделі
+    showAddModelModal() {
+        const modal = document.getElementById('add-model-modal');
+        if (modal) {
+            // Очистити форму
+            this.resetAddModelForm();
+            
+            // Заповнити категорії
+            this.populateModelCategories();
+            
+            modal.classList.add('show');
+            
+            // Фокус на першому полі
+            setTimeout(() => {
+                const titleInput = document.getElementById('model-title');
+                if (titleInput) {
+                    titleInput.focus();
+                }
+            }, 100);
+        }
+    },
+
+    // Закрити модальне вікно додавання моделі
+    closeAddModelModal() {
+        const modal = document.getElementById('add-model-modal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    },
+
+    // Скинути форму додавання моделі
+    resetAddModelForm() {
+        const formElements = [
+            'model-title', 'model-author', 'model-image', 'model-category',
+            'model-description', 'model-print-time', 'model-weight',
+            'model-difficulty', 'model-tags', 'model-formats', 'model-dimensions'
+        ];
+        
+        formElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = '';
+            }
+        });
+        
+        const featuredCheckbox = document.getElementById('model-featured');
+        const newCheckbox = document.getElementById('model-new');
+        if (featuredCheckbox) featuredCheckbox.checked = false;
+        if (newCheckbox) newCheckbox.checked = false;
+        
+        const errorElement = document.getElementById('add-model-error');
+        if (errorElement) {
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+        }
+    },
+
+    // Заповнити категорії в формі додавання моделі
+    populateModelCategories() {
+        const categorySelect = document.getElementById('model-category');
+        if (!categorySelect) return;
+        
+        const state = StateManager.getState();
+        const categories = state.categories.filter(cat => cat.id !== 'all');
+        
+        // Очистити опції, залишивши тільки першу
+        while (categorySelect.options.length > 1) {
+            categorySelect.remove(1);
+        }
+        
+        // Додати категорії
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+        });
+    },
+
+    // Обробка додавання нової моделі
+    handleAddModel() {
+        // Зібрати дані з форми
+        const title = document.getElementById('model-title').value.trim();
+        const author = document.getElementById('model-author').value.trim();
+        const image = document.getElementById('model-image').value.trim();
+        const category = document.getElementById('model-category').value;
+        const description = document.getElementById('model-description').value.trim();
+        const printTime = document.getElementById('model-print-time').value.trim();
+        const weight = document.getElementById('model-weight').value.trim();
+        const difficulty = document.getElementById('model-difficulty').value;
+        const tags = document.getElementById('model-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+        const formats = document.getElementById('model-formats').value.split(',').map(f => f.trim()).filter(f => f);
+        const dimensions = document.getElementById('model-dimensions').value.trim();
+        const featured = document.getElementById('model-featured').checked;
+        const isNew = document.getElementById('model-new').checked;
+        
+        // Валідація
+        const errorElement = document.getElementById('add-model-error');
+        if (!title || !author || !image || !category || !description || 
+            !printTime || !weight || !difficulty || tags.length === 0 || formats.length === 0) {
+            this.showAddModelError('Будь ласка, заповніть всі обов\'язкові поля (позначені *)');
+            return;
+        }
+        
+        if (!image.startsWith('http')) {
+            this.showAddModelError('Будь ласка, введіть коректний URL зображення');
+            return;
+        }
+        
+        // Створити нову модель
+        const newModel = {
+            id: Date.now().toString(),
+            title,
+            author,
+            image,
+            description,
+            printTime,
+            weight,
+            difficulty,
+            downloads: "0",
+            dimensions: dimensions || "Не вказано",
+            formats,
+            tags,
+            featured,
+            isNew
+        };
+        
+        // Додати модель до стану
+        const state = StateManager.getState();
+        state.models.push(newModel);
+        
+        // Зберегти моделі в localStorage
+        try {
+            localStorage.setItem('models_data', JSON.stringify(state.models));
+        } catch (error) {
+            console.error('Помилка збереження моделей:', error);
+            this.showAddModelError('Помилка збереження моделі');
+            return;
+        }
+        
+        // Закрити модальне вікно
+        this.closeAddModelModal();
+        
+        // Показати повідомлення про успіх
+        Utils.showNotification(`Модель "${title}" успішно додана!`);
+        
+        // Оновити статистику
+        this.updateAdminStats();
+        
+        // Якщо користувач не в адмін-панелі, переключитися на головну
+        if (state.currentSection !== 'admin') {
+            StateManager.setCurrentSection('main');
+            UIManager.toggleSections('main');
+            UIManager.updateNavigation('main');
+        }
+    },
+
+    // Показати помилку в формі додавання моделі
+    showAddModelError(message) {
+        const errorElement = document.getElementById('add-model-error');
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // Анімація помилки
+            errorElement.style.animation = 'none';
+            setTimeout(() => {
+                errorElement.style.animation = 'shake 0.5s';
+            }, 10);
+        }
+    },
+
+    // Налаштування модального вікна зміни пароля
+    setupChangePasswordModal() {
+        const changePasswordModal = document.getElementById('change-password-modal');
+        if (!changePasswordModal) return;
+        
+        // Закриття по кліку на фон
+        changePasswordModal.addEventListener('click', (e) => {
+            if (e.target === changePasswordModal) {
+                this.closeChangePasswordModal();
+            }
+        });
+        
+        // Закриття по кнопці
+        const modalClose = changePasswordModal.querySelector('.modal-close');
+        if (modalClose) {
+            modalClose.addEventListener('click', () => {
+                this.closeChangePasswordModal();
+            });
+        }
+        
+        // Скасування
+        const cancelBtn = document.getElementById('change-password-cancel-btn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                this.closeChangePasswordModal();
+            });
+        }
+        
+        // ESC для закриття
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && changePasswordModal.classList.contains('show')) {
+                this.closeChangePasswordModal();
+            }
+        });
+        
+        // Обробка відправки форми
+        const submitBtn = document.getElementById('change-password-submit-btn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleChangePassword();
+            });
+        }
+    },
+
+    // Показати модальне вікно зміни пароля
+    showChangePasswordModal() {
+        const modal = document.getElementById('change-password-modal');
+        if (modal) {
+            // Очистити форму
+            this.resetChangePasswordForm();
+            
+            modal.classList.add('show');
+            
+            // Фокус на першому полі
+            setTimeout(() => {
+                const currentPasswordInput = document.getElementById('current-password');
+                if (currentPasswordInput) {
+                    currentPasswordInput.focus();
+                }
+            }, 100);
+        }
+    },
+
+    // Закрити модальне вікно зміни пароля
+    closeChangePasswordModal() {
+        const modal = document.getElementById('change-password-modal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    },
+
+    // Скинути форму зміни пароля
+    resetChangePasswordForm() {
+        const formElements = [
+            'current-password', 'new-password', 'confirm-password'
+        ];
+        
+        formElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = '';
+            }
+        });
+        
+        const errorElement = document.getElementById('change-password-error');
+        const successElement = document.getElementById('change-password-success');
+        
+        if (errorElement) {
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+        }
+        
+        if (successElement) {
+            successElement.style.display = 'none';
+            successElement.textContent = '';
+        }
+    },
+
+    // Обробка зміни пароля
+    handleChangePassword() {
+        const currentPassword = document.getElementById('current-password').value.trim();
+        const newPassword = document.getElementById('new-password').value.trim();
+        const confirmPassword = document.getElementById('confirm-password').value.trim();
+        
+        const errorElement = document.getElementById('change-password-error');
+        const successElement = document.getElementById('change-password-success');
+        
+        // Валідація
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            this.showChangePasswordError('Будь ласка, заповніть всі поля');
+            return;
+        }
+        
+        if (newPassword.length < 6) {
+            this.showChangePasswordError('Новий пароль повинен містити мінімум 6 символів');
+            return;
+        }
+        
+        if (newPassword !== confirmPassword) {
+            this.showChangePasswordError('Нові паролі не співпадають');
+            return;
+        }
+        
+        // Спробувати змінити пароль
+        const result = AuthSystem.changePassword(currentPassword, newPassword);
+        
+        if (result.success) {
+            // Показати повідомлення про успіх
+            if (successElement) {
+                successElement.textContent = 'Пароль успішно змінено!';
+                successElement.style.display = 'block';
+                
+                // Скинути помилку
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+                
+                // Очистити форму через 2 секунди
+                setTimeout(() => {
+                    this.closeChangePasswordModal();
+                }, 2000);
+            }
+        } else {
+            this.showChangePasswordError(result.message);
+        }
+    },
+
+    // Показати помилку в формі зміни пароля
+    showChangePasswordError(message) {
+        const errorElement = document.getElementById('change-password-error');
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // Анімація помилки
+            errorElement.style.animation = 'none';
+            setTimeout(() => {
+                errorElement.style.animation = 'shake 0.5s';
+            }, 10);
+        }
+    },
+
+    // Налаштування функції резервного копіювання
+    setupBackupFunction() {
+        // Функція вже налаштована в setupAdminActions()
+    },
+
+    // Створити резервну копію
+    createBackup() {
+        const state = StateManager.getState();
+        
+        // Створити об'єкт з даними для резервної копії
+        const backupData = {
+            timestamp: new Date().toISOString(),
+            models: state.models,
+            categories: state.categories.filter(cat => cat.id !== 'all'),
+            favorites: state.favorites,
+            adminHash: localStorage.getItem('admin_password_hash')
+        };
+        
+        // Конвертувати в JSON
+        const jsonData = JSON.stringify(backupData, null, 2);
+        
+        // Створити Blob
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        
+        // Створити URL для завантаження
+        const url = URL.createObjectURL(blob);
+        
+        // Створити посилання для завантаження
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `3dprint_gallery_backup_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Очистити
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+        
+        // Показати повідомлення
+        Utils.showNotification('Резервна копія успішно створена та завантажена');
+    },
+
+    // Оновити статистику адмін-панелі
+    updateAdminStats() {
+        const state = StateManager.getState();
+        
+        // Кількість моделей
+        const modelsCount = document.getElementById('stat-models-count');
+        if (modelsCount) {
+            modelsCount.textContent = state.models.length;
+        }
+        
+        // Кількість в обраному
+        const favoritesCount = document.getElementById('stat-favorites-count');
+        if (favoritesCount) {
+            favoritesCount.textContent = state.favorites.length;
+        }
+        
+        // Кількість категорій
+        const categoriesCount = document.getElementById('stat-categories-count');
+        if (categoriesCount) {
+            categoriesCount.textContent = state.categories.length;
+        }
+        
+        // Загальна кількість завантажень
+        const totalDownloads = document.getElementById('stat-total-downloads');
+        if (totalDownloads && state.models.length > 0) {
+            const total = state.models.reduce((sum, model) => {
+                const downloads = parseInt(model.downloads.replace('K', '000').replace(/[^0-9]/g, '')) || 0;
+                return sum + downloads;
+            }, 0);
+            totalDownloads.textContent = total > 1000 ? 
+                `${(total / 1000).toFixed(1)}K` : 
+                total.toLocaleString();
         }
     }
 };

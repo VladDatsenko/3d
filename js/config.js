@@ -8,6 +8,10 @@ const CONFIG = {
     debounceDelay: 300,
     notificationDuration: 3000,
     
+    // Режим розробки
+    debugMode: false,
+    enablePWA: false,
+    
     // Налаштування адміністратора
     admin: {
         // Пароль для входу (будь-ласка, змініть при першому використанні)
@@ -20,7 +24,9 @@ const CONFIG = {
         // Максимальна кількість спроб входу
         maxLoginAttempts: 5,
         // Блокування при перевищенні спроб (хвилин)
-        lockoutDuration: 15 * 60 * 1000 // 15 хвилин
+        lockoutDuration: 15 * 60 * 1000, // 15 хвилин
+        // Відстеження статистики
+        trackStatistics: true
     },
     
     // Налаштування безпеки

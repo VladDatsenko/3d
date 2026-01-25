@@ -81,6 +81,12 @@ async function initApp() {
         // 8. Оновити статистику адмін-панелі
         updateAdminStats();
         
+        // 9. Додати обробники для нових модальних вікон
+        setupModalHandlers();
+        
+        // 10. Ініціалізація додаткових функцій
+        initializeAdditionalFeatures();
+        
         console.log('=== Додаток успішно ініціалізовано! ===');
     } catch (error) {
         console.error('Помилка ініціалізації додатка:', error);
@@ -127,6 +133,12 @@ function addNotificationStyles() {
             font-weight: 600;
             max-width: 300px;
         }
+        .notification.warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        }
+        .notification.error {
+            background: linear-gradient(135deg, #ff2a6d 0%, #c2185b 100%);
+        }
     `;
     document.head.appendChild(style);
 }
@@ -138,10 +150,17 @@ function addAuthStyles() {
     const style = document.createElement('style');
     style.id = 'auth-styles';
     style.textContent = `
-        /* Стилі для адмін-панелі */
-        .admin-section {
-            padding: 2rem 0;
-            animation: fadeIn 0.5s ease;
+        /* Стилі для адмін-панелі та форм вже в admin-panel.css */
+        
+        /* Додаткові стилі для нових модальних вікон */
+        .success-message {
+            background: rgba(68, 214, 44, 0.1);
+            color: var(--accent-primary);
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            border: 1px solid rgba(68, 214, 44, 0.3);
+            animation: fadeIn 0.3s ease;
         }
         
         @keyframes fadeIn {
@@ -149,299 +168,162 @@ function addAuthStyles() {
             to { opacity: 1; }
         }
         
-        .admin-welcome {
-            background: var(--bg-card);
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            margin-bottom: 2rem;
-            border: 1px solid rgba(68, 214, 44, 0.2);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .admin-welcome h3 {
-            color: var(--accent-primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.5rem;
-        }
-        
-        .admin-welcome p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-        
-        .admin-content {
+        .form-row {
             display: flex;
-            flex-direction: column;
-            gap: 3rem;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
         
-        .admin-stats h3,
-        .admin-actions h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(68, 214, 44, 0.3);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .stat-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .stat-card:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--gradient-primary);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            color: white;
-            flex-shrink: 0;
-        }
-        
-        .stat-info {
-            display: flex;
-            flex-direction: column;
+        .form-row .form-group {
             flex: 1;
         }
         
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--accent-primary);
-            line-height: 1;
-            margin-bottom: 0.25rem;
+        textarea.form-input {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .action-btn {
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-lg);
-            padding: 1.75rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
+        select.form-input {
             cursor: pointer;
-            transition: var(--transition);
-            color: var(--text-primary);
-            text-decoration: none;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
         }
         
-        .action-btn:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-4px);
-            background: rgba(68, 214, 44, 0.05);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .action-btn i {
-            font-size: 2.5rem;
-            color: var(--accent-primary);
-        }
-        
-        .action-btn span {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-        
-        /* Форми автентифікації */
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-        
-        .form-input {
-            padding: 0.875rem 1.25rem;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: var(--bg-card);
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: var(--transition);
-            width: 100%;
-        }
-        
-        .form-input:focus {
-            border-color: var(--accent-primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(68, 214, 44, 0.2);
-        }
-        
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .security-question {
-            background: var(--bg-accent);
-            padding: 1.25rem;
-            border-radius: var(--radius-lg);
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(68, 214, 44, 0.1);
-        }
-        
-        .security-question p {
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-        
-        .security-question strong {
-            color: var(--accent-primary);
-        }
-        
-        .error-message {
-            background: rgba(255, 42, 109, 0.1);
-            color: var(--accent-danger);
-            padding: 1rem 1.25rem;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            border: 1px solid rgba(255, 42, 109, 0.3);
-            animation: shake 0.5s;
-        }
-        
-        .attempts-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-            padding: 1rem 1.25rem;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-        }
-        
-        .attempts-info i {
-            font-size: 1.25rem;
-        }
-        
-        /* Адаптивність адмін-панелі */
-        @media (max-width: 1024px) {
-            .stats-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-            
-            .actions-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            }
-        }
-        
+        /* Адаптивність для форм */
         @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            }
-            
-            .actions-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-            
-            .stat-card {
-                padding: 1.25rem;
-                gap: 1rem;
-            }
-            
-            .stat-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
-            }
-            
-            .stat-value {
-                font-size: 1.75rem;
-            }
-            
-            .action-btn {
-                padding: 1.5rem;
-            }
-            
-            .action-btn i {
-                font-size: 2rem;
-            }
-            
-            .form-actions {
+            .form-row {
                 flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .form-actions button {
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .admin-welcome {
-                padding: 1.25rem;
-            }
-            
-            .admin-welcome h3 {
-                font-size: 1.3rem;
+                gap: 0.75rem;
             }
         }
     `;
     document.head.appendChild(style);
+}
+
+// Налаштування обробників для модальних вікон
+function setupModalHandlers() {
+    // Додаткові обробники для модальних вікон, які не в AuthEvents
+    const modals = [
+        'add-model-modal',
+        'change-password-modal',
+        'auth-modal',
+        'categories-modal',
+        'model-modal'
+    ];
+    
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            // Закриття по кліку на фон
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+            
+            // Закриття по кнопці закриття
+            const closeBtn = modal.querySelector('.modal-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.remove('show');
+                });
+            }
+            
+            // ESC для закриття
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('show')) {
+                    modal.classList.remove('show');
+                }
+            });
+        }
+    });
+}
+
+// Ініціалізація додаткових функцій
+function initializeAdditionalFeatures() {
+    // Перевірка версії додатка
+    const appVersion = '1.0.0';
+    console.log(`Версія додатка: ${appVersion}`);
+    
+    // Перевірка підтримки Web Storage
+    if (!window.localStorage) {
+        console.warn('LocalStorage не підтримується. Деякі функції можуть не працювати.');
+        Utils.showNotification('Ваш браузер не підтримує збереження даних. Рекомендуємо оновити браузер.', 'warning');
+    }
+    
+    // Перевірка мережі
+    window.addEventListener('online', () => {
+        console.log('Мережа: онлайн');
+    });
+    
+    window.addEventListener('offline', () => {
+        console.log('Мережа: офлайн');
+        Utils.showNotification('Ви в режимі офлайн. Деякі функції можуть бути обмежені.', 'warning');
+    });
+    
+    // Відстеження подій для статистики (опційно)
+    if (CONFIG.admin.trackStatistics) {
+        setupAnalytics();
+    }
+    
+    // Ініціалізація Service Worker для PWA (якщо потрібно)
+    if ('serviceWorker' in navigator && CONFIG.enablePWA) {
+        registerServiceWorker();
+    }
+}
+
+// Налаштування аналітики
+function setupAnalytics() {
+    console.log('Налаштування аналітики...');
+    
+    // Проста аналітика на основі localStorage
+    const analyticsKey = 'app_analytics';
+    let analytics = localStorage.getItem(analyticsKey);
+    
+    if (!analytics) {
+        analytics = {
+            firstVisit: new Date().toISOString(),
+            totalVisits: 0,
+            pageViews: {},
+            lastVisit: null
+        };
+    } else {
+        try {
+            analytics = JSON.parse(analytics);
+        } catch (e) {
+            analytics = {
+                firstVisit: new Date().toISOString(),
+                totalVisits: 0,
+                pageViews: {},
+                lastVisit: null
+            };
+        }
+    }
+    
+    // Оновити статистику
+    analytics.totalVisits = (analytics.totalVisits || 0) + 1;
+    analytics.lastVisit = new Date().toISOString();
+    
+    // Зберегти
+    try {
+        localStorage.setItem(analyticsKey, JSON.stringify(analytics));
+    } catch (e) {
+        console.warn('Не вдалося зберегти аналітику:', e);
+    }
+}
+
+// Реєстрація Service Worker
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker зареєстрований успішно:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('Помилка реєстрації ServiceWorker:', error);
+                });
+        });
+    }
 }
 
 // Оновити статистику адмін-панелі
@@ -478,14 +360,29 @@ function updateAdminStats() {
                 `${(total / 1000).toFixed(1)}K` : 
                 total.toLocaleString();
         }
+        
+        // Оновити дату в адмін-привітанні
+        const adminWelcome = document.getElementById('admin-welcome');
+        if (adminWelcome && AuthSystem.isAuthenticated()) {
+            const authState = AuthSystem.getAuthState();
+            const lastActivity = authState.lastActivity ? 
+                new Date(authState.lastActivity).toLocaleString('uk-UA') : 
+                'тільки що';
+            adminWelcome.innerHTML = `
+                <h3>Ласкаво просимо до адмін-панелі!</h3>
+                <p>Остання активність: ${lastActivity}</p>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                    Моделей: ${state.models.length} | Категорій: ${state.categories.length} | Обраних: ${state.favorites.length}
+                </p>
+            `;
+        }
     }, 500);
 }
 
 // Функція для сповіщення про помилку
 function showErrorNotification(message) {
     const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.style.background = '#ff2a6d';
+    notification.className = 'notification error';
     notification.textContent = message;
     document.body.appendChild(notification);
     
@@ -495,16 +392,137 @@ function showErrorNotification(message) {
     }, 5000);
 }
 
+// Функція для перевірки оновлень даних
+async function checkForUpdates() {
+    try {
+        // Перевірити чи є оновлення даних
+        const lastUpdateCheck = localStorage.getItem('last_update_check');
+        const now = Date.now();
+        
+        // Перевіряти раз на день
+        if (!lastUpdateCheck || (now - parseInt(lastUpdateCheck)) > 24 * 60 * 60 * 1000) {
+            console.log('Перевірка оновлень даних...');
+            
+            // Тут можна додати логіку для перевірки оновлень з сервера
+            localStorage.setItem('last_update_check', now.toString());
+        }
+    } catch (error) {
+        console.warn('Помилка перевірки оновлень:', error);
+    }
+}
+
+// Глобальні функції для відладки (лише для розробки)
+if (CONFIG.debugMode) {
+    window.debugState = () => {
+        const state = StateManager.getState();
+        console.log('=== ДЕБАГ СТАНУ ===');
+        console.log('Моделі:', state.models.length);
+        console.log('Категорії:', state.categories.length);
+        console.log('Обране:', state.favorites.length);
+        console.log('Поточна категорія:', state.currentCategory);
+        console.log('Поточний фільтр:', state.currentFilter);
+        console.log('Поточна секція:', state.currentSection);
+        console.log('Автентифікований:', AuthSystem.isAuthenticated());
+        console.log('===================');
+        return state;
+    };
+    
+    window.clearAllData = () => {
+        if (confirm('Видалити ВСІ дані? Цю дію неможливо скасувати!')) {
+            localStorage.clear();
+            sessionStorage.clear();
+            location.reload();
+        }
+    };
+}
+
 // Запуск додатка
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM завантажений, запуск додатка...');
-    setTimeout(() => initApp(), 100); // Невелика затримка для стабільності
+    
+    // Додати завантажувач
+    addLoadingScreen();
+    
+    // Невелика затримка для стабільності
+    setTimeout(() => {
+        initApp().then(() => {
+            // Перевірити оновлення після ініціалізації
+            checkForUpdates();
+            
+            // Приховати завантажувач
+            removeLoadingScreen();
+        }).catch(error => {
+            console.error('Помилка ініціалізації:', error);
+            removeLoadingScreen();
+            showErrorNotification('Критична помилка ініціалізації. Будь ласка, перезавантажте сторінку.');
+        });
+    }, 100);
 });
 
 // Додатковий обробник для помилок завантаження
 window.addEventListener('error', (event) => {
     console.error('Глобальна помилка:', event.error);
+    
+    // Показати користувачеві дружнє повідомлення
+    if (event.error && event.error.message && event.error.message.includes('fetch')) {
+        showErrorNotification('Проблема з мережею. Перевірте підключення до інтернету.');
+    }
 });
 
-// Експорт функції ініціалізації (якщо потрібно)
-export { initApp };
+// Додати екран завантаження
+function addLoadingScreen() {
+    const loader = document.createElement('div');
+    loader.id = 'app-loader';
+    loader.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-primary);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+    `;
+    
+    loader.innerHTML = `
+        <div class="loader-spinner" style="
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        "></div>
+        <div style="color: var(--text-primary); font-weight: 600; font-size: 1.1rem;">
+            Завантаження 3DPrint Gallery...
+        </div>
+        <style>
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    
+    document.body.appendChild(loader);
+}
+
+// Приховати екран завантаження
+function removeLoadingScreen() {
+    const loader = document.getElementById('app-loader');
+    if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            if (loader.parentNode) {
+                loader.parentNode.removeChild(loader);
+            }
+        }, 300);
+    }
+}
+
+// Експорт функцій для тестування (якщо потрібно)
+export { initApp, updateAdminStats, showErrorNotification };
