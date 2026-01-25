@@ -6,6 +6,7 @@
     padding: 2rem 0;
     animation: fadeIn 0.5s ease;
 }
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -64,7 +65,7 @@
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(68, 214, 44, 0.15);
     transition: var(--transition);
     box-shadow: var(--shadow-sm);
 }
@@ -86,6 +87,7 @@
     font-size: 1.75rem;
     color: white;
     flex-shrink: 0;
+    text-shadow: var(--text-shadow-green);
 }
 
 .stat-info {
@@ -97,9 +99,11 @@
 .stat-value {
     font-size: 2rem;
     font-weight: 800;
-    color: var(--accent-primary);
+    color: #ccffcc;
+    /* Світло-зелений для кращого контрасту */
     line-height: 1;
     margin-bottom: 0.25rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .stat-label {
@@ -130,23 +134,27 @@
     text-decoration: none;
     text-align: center;
     box-shadow: var(--shadow-sm);
+    position: relative;
 }
 
 .action-btn:hover {
     border-color: var(--accent-primary);
+    color: var(--accent-primary);
     transform: translateY(-4px);
-    background: rgba(68, 214, 44, 0.05);
+    background: var(--bg-card);
     box-shadow: var(--shadow-lg);
 }
 
 .action-btn i {
     font-size: 2.5rem;
     color: var(--accent-primary);
+    transition: var(--transition);
 }
 
 .action-btn span {
     font-weight: 700;
     font-size: 1.1rem;
+    transition: var(--transition);
 }
 
 /* Форми автентифікації */

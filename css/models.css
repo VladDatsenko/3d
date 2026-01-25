@@ -43,13 +43,29 @@
 }
 
 .filter-btn.active {
-    position: relative;
-    background: var(--gradient-primary);
-    color: white;
-    border-color: transparent;
+    background: var(--bg-card);
+    /* Залишаємо темний фон */
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
 
-    /* Овальна тінь для фільтрів теж */
-    filter: drop-shadow(0 0 15px rgba(68, 214, 44, 0.5)) drop-shadow(0 0 30px rgba(68, 214, 44, 0.2));
+    /* Тільки підсвічування */
+    box-shadow: var(--shadow-neon);
+
+    /* Ефект "піднятої" кнопки */
+    transform: translateY(-2px);
+
+    /* Додаємо внутрішнє світіння */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: var(--radius-full);
+        box-shadow: inset 0 0 8px rgba(68, 214, 44, 0.15);
+        pointer-events: none;
+    }
 }
 
 /* Сітка моделей */
@@ -87,11 +103,12 @@
     top: 1rem;
     right: 1rem;
     background: var(--gradient-secondary);
-    color: white;
+    color: var(--text-on-green);
     padding: 0.25rem 0.75rem;
     border-radius: var(--radius-full);
     font-size: 0.75rem;
     font-weight: 700;
+    text-shadow: var(--text-shadow-green);
 }
 
 .model-content {
@@ -216,13 +233,15 @@
     justify-content: center;
     gap: 0.5rem;
     text-decoration: none;
+    position: relative;
 }
 
 .btn-primary {
     background: var(--gradient-primary);
-    color: white;
+    color: var(--text-on-green);
     flex: 1;
     border: 1px solid transparent;
+    text-shadow: var(--text-shadow-green);
 }
 
 .btn-primary:hover {
