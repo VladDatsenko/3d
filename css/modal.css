@@ -120,9 +120,44 @@
     color: var(--accent-primary);
 }
 
+.modal-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
 .modal-actions {
     display: flex;
     gap: 1rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* КНОПКА "ЗАВАНТАЖИТИ МОДЕЛЬ" - МЕНШ КИСЛОТНА */
+.modal-actions .btn-primary {
+    background: linear-gradient(135deg, rgba(0, 255, 68, 0.7) 0%, rgba(68, 255, 0, 0.7) 100%);
+    color: var(--text-on-green);
+    flex: 2;
+    border: 1px solid transparent;
+    text-shadow: var(--text-shadow-green);
+    box-shadow: 0 0 10px rgba(170, 255, 170, 0.4);
+}
+
+.modal-actions .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(170, 255, 170, 0.6);
+}
+
+/* КНОПКА "ДОДАТИ/ВИДАЛИТИ З ОБРАНОГО" - ТАКА Ж ЯК РАНІШЕ */
+.toggle-favorite {
+    background: var(--bg-accent);
+    color: var(--accent-primary);
+    border: 1px solid rgba(68, 255, 0, 0.4);
+}
+
+.toggle-favorite:hover {
+    background: rgba(68, 255, 0, 0.1);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 10px rgba(68, 255, 0, 0.3);
 }

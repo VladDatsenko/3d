@@ -10,12 +10,13 @@
     --text-secondary: #8a8aa3;
     --text-muted: #6a6a8a;
 
-    /* Оновлені кольори для кращого контрасту */
-    --razer-green-light: #3ac12a;
-    /* Трохи темніший ніж #44d62c */
-    --razer-green-dark: #009a00;
-    /* Темніший для кращого контрасту */
-    --razer-green-neon: #44ff00;
+    /* ЯСКРАВІ КИСЛОТНО-ЗЕЛЕНІ КОЛЬОРИ */
+    --razer-green-light: #44ff00;
+    /* Найяскравіший зелений */
+    --razer-green-dark: #00ff44;
+    /* Яскраво-зелений */
+    --razer-green-neon: #44ff44;
+    /* Неоновий зелений */
 
     /* Акцентні кольори */
     --accent-primary: var(--razer-green-light);
@@ -28,18 +29,18 @@
     --gradient-card: linear-gradient(145deg, #1a1a25 0%, #222235 100%);
     --gradient-category: linear-gradient(135deg, var(--razer-green-dark) 0%, var(--razer-green-light) 100%);
 
-    /* Тіні */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-    --shadow-neon: 0 0 15px rgba(68, 214, 44, 0.5), 0 0 30px rgba(68, 214, 44, 0.2);
-    --shadow-accent: 0 0 20px rgba(68, 214, 44, 0.6);
+    /* ЯСКРАВІШІ ТІНІ */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --shadow-neon: 0 0 25px rgba(68, 255, 0, 0.7), 0 0 50px rgba(0, 255, 68, 0.4);
+    --shadow-accent: 0 0 30px rgba(68, 255, 0, 0.8);
 
     /* Нові змінні для покращення читабельності */
     --text-on-green: #ffffff;
-    --text-shadow-green: 0 1px 3px rgba(0, 0, 0, 0.5);
-    --inset-shadow-light: inset 0 1px 2px rgba(255, 255, 255, 0.15);
-    --inset-shadow-dark: inset 0 0 0 1px rgba(0, 0, 0, 0.3);
+    --text-shadow-green: 0 1px 4px rgba(0, 0, 0, 0.7);
+    --inset-shadow-light: inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    --inset-shadow-dark: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 
     /* Радіуси */
     --radius-sm: 6px;
@@ -67,20 +68,20 @@
     --text-secondary: #4a4a6a;
     --text-muted: #6a6a8a;
 
-    /* Світла версія Razer кольорів */
-    --razer-green-light: #2ea823;
-    --razer-green-dark: #1e7c1e;
-    --razer-green-neon: #2ea823;
+    /* Світла версія яскравих кольорів */
+    --razer-green-light: #00ff44;
+    --razer-green-dark: #00cc44;
+    --razer-green-neon: #00ff44;
 
     /* Оновлені змінні для світлої теми */
-    --text-on-green: #ffffff;
-    --text-shadow-green: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --inset-shadow-light: inset 0 1px 2px rgba(255, 255, 255, 0.2);
-    --inset-shadow-dark: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+    --text-on-green: #0a0a0f;
+    --text-shadow-green: 0 1px 2px rgba(0, 0, 0, 0.1);
+    --inset-shadow-light: inset 0 1px 3px rgba(255, 255, 255, 0.3);
+    --inset-shadow-dark: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
 
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --shadow-neon: 0 0 15px rgba(46, 168, 35, 0.2);
-    --shadow-accent: 0 0 20px rgba(46, 168, 35, 0.3);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+    --shadow-neon: 0 0 20px rgba(0, 255, 68, 0.5);
+    --shadow-accent: 0 0 25px rgba(0, 255, 68, 0.6);
 }

@@ -51,17 +51,16 @@
 .category-btn.active {
     position: relative;
     background: var(--bg-card);
-    /* Залишаємо темний фон */
     border-color: var(--accent-primary);
     color: var(--accent-primary);
 
-    /* Тільки підсвічування обводкою та світінням */
+    /* ЯСКРАВЕ ПІДСВІТЛЕННЯ */
     box-shadow: var(--shadow-neon);
 
-    /* Ефект "піднятої" кнопки */
-    transform: translateY(-2px);
+    /* ПОСИЛЕНИЙ ЕФЕКТ ПІДНЯТТЯ */
+    transform: translateY(-3px);
 
-    /* Додаємо внутрішнє світіння */
+    /* ЯСКРАВІШЕ ВНУТРІШНЄ СВІТІННЯ */
     &::before {
         content: '';
         position: absolute;
@@ -70,7 +69,7 @@
         right: 0;
         bottom: 0;
         border-radius: var(--radius-full);
-        box-shadow: inset 0 0 8px rgba(68, 214, 44, 0.15);
+        box-shadow: inset 0 0 15px rgba(68, 255, 0, 0.25);
         pointer-events: none;
     }
 }
@@ -104,7 +103,7 @@
 }
 
 .scroll-btn:hover {
-    background: rgba(68, 214, 44, 0.1);
+    background: rgba(68, 255, 0, 0.15);
     box-shadow: var(--shadow-sm);
     border-color: var(--accent-primary);
 }
