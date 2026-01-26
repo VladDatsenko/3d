@@ -4,6 +4,7 @@ import { DomElements } from './dom-elements.js';
 import { UIManager } from './ui.js';
 import { Utils } from './utils.js';
 import { StateManager } from './state.js';
+import { CategoriesManager } from './categories.js';
 
 // Обробники подій для адмін-панелі
 const AuthEvents = {
@@ -17,6 +18,7 @@ const AuthEvents = {
         this.setupLogoutButton();
         this.setupAuthModal();
         this.setupAdminActions();
+        this.setupCategoriesModalEvents();
         
         // Слухач зміни стану автентифікації
         document.addEventListener('authChange', (e) => {
@@ -35,6 +37,170 @@ const AuthEvents = {
         this.setupBackupFunction();
     },
 
+    // Налаштування обробників для модального вікна керування категоріями
+    setupCategoriesModalEvents() {
+        console.log('Налаштування обробників для модального вікна категорій...');
+        
+        // Кнопка "Додати категорію"
+        if (DomElements.addCategoryBtn) {
+            DomElements.addCategoryBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Додати категорію натиснуто');
+                CategoriesManager.addNewCategory();
+                this.setupCategoryInputListeners(); // Додаємо обробники для нової категорії
+            });
+        }
+        
+        // Кнопка "Зберегти зміни"
+        if (DomElements.saveCategoriesBtn) {
+            DomElements.saveCategoriesBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Зберегти зміни натиснуто');
+                if (CategoriesManager.saveCategoriesFromEditor()) {
+                    UIManager.closeCategoriesModal();
+                    UIManager.renderCategories(); // Оновити категорії на головній сторінці
+                }
+            });
+        }
+        
+        // Кнопка "Відновити стандартні"
+        if (DomElements.restoreDefaultCategoriesBtn) {
+            DomElements.restoreDefaultCategoriesBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Відновити стандартні натиснуто');
+                if (CategoriesManager.restoreDefaultCategories()) {
+                    CategoriesManager.renderCategoriesEditor();
+                    this.setupCategoryInputListeners(); // Додаємо обробники для нових категорій
+                }
+            });
+        }
+        
+        // Додаємо делегування подій для контейнера (для нових елементів)
+        if (DomElements.categoriesListContainer) {
+            DomElements.categoriesListContainer.addEventListener('click', (e) => {
+                this.handleCategoryEditorClick(e);
+            });
+        }
+        
+        // Додаємо обробники для полів введення
+        this.setupCategoryInputListeners();
+    },
+    
+    // Налаштування обробників для полів введення категорій
+    setupCategoryInputListeners() {
+        console.log('Налаштування обробників для полів категорій...');
+        
+        // Поля введення для оновлення категорій в реальному часі
+        const nameInputs = document.querySelectorAll('.category-name-input');
+        nameInputs.forEach(input => {
+            input.addEventListener('input', this.handleCategoryInputChange.bind(this));
+        });
+        
+        const colorInputs = document.querySelectorAll('.category-color-input');
+        colorInputs.forEach(input => {
+            input.addEventListener('input', this.handleCategoryInputChange.bind(this));
+        });
+        
+        const tagInputs = document.querySelectorAll('.category-tags-input');
+        tagInputs.forEach(input => {
+            input.addEventListener('input', this.handleCategoryInputChange.bind(this));
+        });
+        
+        const iconSelects = document.querySelectorAll('.category-icon-select');
+        iconSelects.forEach(select => {
+            select.addEventListener('change', this.handleCategoryInputChange.bind(this));
+        });
+    },
+    
+    // Обробник кліку для редактора категорій (делегування)
+    handleCategoryEditorClick(e) {
+        const target = e.target;
+        const toggleLockBtn = target.closest('.toggle-lock-btn');
+        const deleteCategoryBtn = target.closest('.delete-category-btn');
+        
+        if (toggleLockBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.handleToggleLock.call(this, toggleLockBtn);
+        }
+        
+        if (deleteCategoryBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.handleDeleteCategory.call(this, deleteCategoryBtn);
+        }
+    },
+    
+    // Обробник перемикання блокування категорії
+    handleToggleLock(button) {
+        const categoryId = button.dataset.id;
+        
+        if (categoryId) {
+            console.log('Перемикання блокування для категорії:', categoryId);
+            CategoriesManager.toggleCategoryLock(categoryId);
+            
+            // Після зміни стану, додаємо нові обробники
+            this.setupCategoryInputListeners();
+        }
+    },
+    
+    // Обробник видалення категорії
+    handleDeleteCategory(button) {
+        const categoryId = button.dataset.id;
+        
+        if (categoryId) {
+            console.log('Видалення категорії:', categoryId);
+            
+            // Знаходимо назву категорії для повідомлення
+            const category = StateManager.findCategory(categoryId);
+            const categoryName = category ? category.name : 'цієї категорії';
+            
+            if (confirm(`Ви впевнені, що хочете видалити категорію "${categoryName}"?`)) {
+                if (CategoriesManager.deleteCategory(categoryId)) {
+                    // Оновлюємо інтерфейс
+                    setTimeout(() => {
+                        CategoriesManager.renderCategoriesEditor();
+                        this.setupCategoryInputListeners();
+                    }, 50);
+                }
+            }
+        }
+    },
+    
+    // Обробник зміни в полях категорії
+    handleCategoryInputChange(e) {
+        const input = e.target;
+        const categoryId = input.dataset.id;
+        
+        if (!categoryId) return;
+        
+        const category = StateManager.findCategory(categoryId);
+        if (!category) return;
+        
+        // Оновлюємо значення в залежності від типу поля
+        if (input.classList.contains('category-name-input')) {
+            category.name = input.value.trim();
+        } else if (input.classList.contains('category-color-input')) {
+            category.color = input.value;
+        } else if (input.classList.contains('category-tags-input')) {
+            category.tags = input.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+        } else if (input.classList.contains('category-icon-select')) {
+            category.icon = input.value;
+        }
+        
+        // Оновлюємо перегляд іконки в реальному часі
+        if (input.classList.contains('category-icon-select')) {
+            const iconPreview = input.closest('.category-edit-item').querySelector('.icon-preview i');
+            if (iconPreview) {
+                iconPreview.className = `fas ${input.value}`;
+            }
+        }
+    },
+
+    // Інші функції залишаються без змін (з попередньої версії)
     // Налаштування кнопки адміна
     setupAdminButton() {
         this.updateAdminButton();
@@ -154,7 +320,7 @@ const AuthEvents = {
         }
     },
 
-    // Оновити інформацію про спроби входу
+    // Оновити інформація про спроби входу
     updateLoginAttemptsInfo() {
         const attemptsInfo = document.getElementById('login-attempts-info');
         if (!attemptsInfo) return;
@@ -483,6 +649,7 @@ const AuthEvents = {
         const manageCategoriesBtn = document.getElementById('admin-manage-categories');
         if (manageCategoriesBtn) {
             manageCategoriesBtn.addEventListener('click', () => {
+                console.log('Керування категоріями натиснуто');
                 UIManager.showCategoriesModal();
             });
         }
@@ -663,9 +830,8 @@ const AuthEvents = {
             return;
         }
         
-        // ФІКС: Правильна валідація URL
-        if (!image.startsWith('http://') && !image.startsWith('https://')) {
-            this.showAddModelError('Будь ласка, введіть коректний URL зображення (має починатися з http:// або https://)');
+        if (!image.startsWith('http')) {
+            this.showAddModelError('Будь ласка, введіть коректний URL зображення');
             return;
         }
         

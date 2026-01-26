@@ -30,6 +30,8 @@ const UIManager = {
             </button>
             `;
         }).join('');
+        
+        console.log('Категорії оновлено');
     },
 
     // Відобразити моделі
@@ -144,6 +146,7 @@ const UIManager = {
 
     // Показати модальне вікно категорій
     showCategoriesModal() {
+        console.log('Відкриття модального вікна категорій');
         CategoriesManager.renderCategoriesEditor();
         if (DomElements.categoriesModal) {
             DomElements.categoriesModal.classList.add('show');
