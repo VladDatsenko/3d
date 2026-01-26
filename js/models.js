@@ -1,5 +1,7 @@
+// js/models.js
 import { StateManager } from './state.js';
 import { Utils } from './utils.js';
+import { AuthSystem } from './auth.js';
 
 // Функції для роботи з моделями
 const ModelsManager = {
@@ -12,6 +14,7 @@ const ModelsManager = {
             // Пошук
             const matchesSearch = !query || 
                 model.title.toLowerCase().includes(query) ||
+                model.author.toLowerCase().includes(query) ||
                 model.description.toLowerCase().includes(query) ||
                 model.tags.some(tag => tag.toLowerCase().includes(query));
             
@@ -42,15 +45,23 @@ const ModelsManager = {
         if (!model) return false;
         
         // Оновлення кількості завантажень
-        const numericDownloads = parseInt(model.downloads.replace('K', '000').replace(/[^0-9]/g, ''));
+        const numericDownloads = parseInt(model.downloads.replace('K', '000').replace(/[^0-9]/g, '')) || 0;
         model.downloads = (numericDownloads + 1).toLocaleString();
         if (numericDownloads + 1 >= 1000) {
             model.downloads = ((numericDownloads + 1) / 1000).toFixed(1) + 'K';
         }
         
+        // Оновити модель в стані
+        const state = StateManager.getState();
+        const modelIndex = state.models.findIndex(m => m.id === modelId);
+        if (modelIndex !== -1) {
+            state.models[modelIndex] = model;
+            this.saveModelsToStorage();
+        }
+        
         // Симуляція завантаження
         const link = document.createElement('a');
-        link.href = '#';
+        link.href = '#'; // Можна додати реальну URL моделі
         link.download = `${model.title.replace(/\s+/g, '_')}.stl`;
         document.body.appendChild(link);
         link.click();
@@ -66,6 +77,7 @@ const ModelsManager = {
         const isNew = model.isNew ? '<span class="model-badge">NEW</span>' : '';
         const isFeatured = model.featured ? '<span class="model-badge">POPULAR</span>' : '';
         const isFavorite = state.favorites.includes(model.id) ? 'active' : '';
+        const isAdmin = AuthSystem.isAuthenticated();
         
         return `
         <div class="model-card" data-id="${model.id}">
@@ -110,6 +122,19 @@ const ModelsManager = {
                         <i class="fas fa-download"></i> STL
                     </button>
                 </div>
+                
+                ${isAdmin ? `
+                <div class="model-admin-actions" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                        <button class="btn btn-warning edit-model-btn" data-id="${model.id}" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
+                            <i class="fas fa-edit"></i> Редагувати
+                        </button>
+                        <button class="btn btn-danger delete-model-btn" data-id="${model.id}" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
+                            <i class="fas fa-trash"></i> Видалити
+                        </button>
+                    </div>
+                </div>
+                ` : ''}
             </div>
         </div>
         `;
@@ -119,6 +144,7 @@ const ModelsManager = {
     createModelDetailsHTML(model) {
         const state = StateManager.getState();
         const isFavorite = state.favorites.includes(model.id);
+        const isAdmin = AuthSystem.isAuthenticated();
         
         return `
         <img src="${model.image}" alt="${model.title}" class="modal-image">
@@ -166,7 +192,147 @@ const ModelsManager = {
                 ${isFavorite ? 'Видалити з обраного' : 'Додати в обране'}
             </button>
         </div>
+        
+        ${isAdmin ? `
+        <div class="modal-admin-actions" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Адмін-дії</h4>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-warning edit-model-modal-btn" data-id="${model.id}" style="flex: 1;">
+                    <i class="fas fa-edit"></i> Редагувати модель
+                </button>
+                <button class="btn btn-danger delete-model-modal-btn" data-id="${model.id}" style="flex: 1;">
+                    <i class="fas fa-trash"></i> Видалити модель
+                </button>
+            </div>
+        </div>
+        ` : ''}
         `;
+    },
+
+    // Видалити модель
+    deleteModel(modelId) {
+        const model = StateManager.findModel(modelId);
+        if (!model) {
+            Utils.showNotification('Модель не знайдена', 'error');
+            return false;
+        }
+        
+        if (!confirm(`Ви впевнені, що хочете видалити модель "${model.title}"?`)) {
+            return false;
+        }
+        
+        // Видалити модель зі стану
+        const state = StateManager.getState();
+        const index = state.models.findIndex(m => m.id === modelId);
+        if (index !== -1) {
+            state.models.splice(index, 1);
+            
+            // Видалити з обраного
+            StateManager.removeFromFavorites(modelId);
+            
+            // Зберегти зміни
+            this.saveModelsToStorage();
+            
+            // Оновити відфільтровані моделі
+            state.filteredModels = state.filteredModels.filter(m => m.id !== modelId);
+            
+            Utils.showNotification(`Модель "${model.title}" видалена`);
+            return true;
+        }
+        
+        Utils.showNotification('Помилка видалення моделі', 'error');
+        return false;
+    },
+
+    // Оновити модель
+    updateModel(modelId, updatedData) {
+        const state = StateManager.getState();
+        const index = state.models.findIndex(m => m.id === modelId);
+        
+        if (index !== -1) {
+            // Зберегти оригінальні дані, які не змінюються
+            const originalModel = state.models[index];
+            const updatedModel = {
+                ...originalModel,
+                ...updatedData,
+                id: modelId, // Гарантуємо, що ID не зміниться
+                downloads: originalModel.downloads // Зберігаємо кількість завантажень
+            };
+            
+            state.models[index] = updatedModel;
+            
+            // Оновити в filteredModels
+            const filteredIndex = state.filteredModels.findIndex(m => m.id === modelId);
+            if (filteredIndex !== -1) {
+                state.filteredModels[filteredIndex] = updatedModel;
+            }
+            
+            this.saveModelsToStorage();
+            return updatedModel;
+        }
+        
+        return null;
+    },
+
+    // Зберегти моделі в localStorage
+    saveModelsToStorage() {
+        const state = StateManager.getState();
+        try {
+            localStorage.setItem('models_data', JSON.stringify(state.models));
+            return true;
+        } catch (error) {
+            console.error('Помилка збереження моделей:', error);
+            return false;
+        }
+    },
+
+    // Отримати категорію моделі
+    getModelCategory(model) {
+        const state = StateManager.getState();
+        const categories = state.categories.filter(cat => cat.id !== 'all');
+        
+        // Знайти категорію по тегам
+        for (const category of categories) {
+            if (category.tags && category.tags.length > 0) {
+                const hasMatchingTag = category.tags.some(tag => 
+                    model.tags.some(modelTag => 
+                        modelTag.toLowerCase().includes(tag.toLowerCase())
+                    )
+                );
+                
+                if (hasMatchingTag) {
+                    return category.id;
+                }
+            }
+        }
+        
+        return 'all'; // За замовчуванням
+    },
+
+    // Створити нову модель
+    createNewModel(data) {
+        const newModel = {
+            id: Date.now().toString(),
+            title: data.title || 'Нова модель',
+            author: data.author || 'Невідомий автор',
+            image: data.image || 'https://images.unsplash.com/photo-1589939705388-13b77b3a5d65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            description: data.description || 'Опис моделі',
+            printTime: data.printTime || 'Не вказано',
+            weight: data.weight || 'Не вказано',
+            difficulty: data.difficulty || 'Середня',
+            downloads: "0",
+            dimensions: data.dimensions || "Не вказано",
+            formats: data.formats || ['STL'],
+            tags: data.tags || [],
+            featured: data.featured || false,
+            isNew: data.isNew || false
+        };
+        
+        const state = StateManager.getState();
+        state.models.push(newModel);
+        this.saveModelsToStorage();
+        
+        return newModel;
     }
 };
 

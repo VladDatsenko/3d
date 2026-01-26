@@ -36,7 +36,6 @@
     cursor: pointer;
     transition: var(--transition);
     color: var(--text-secondary);
-    position: relative;
 }
 
 .filter-btn:hover {
@@ -48,9 +47,7 @@
     background: var(--bg-card);
     border-color: var(--accent-primary);
     color: var(--accent-primary);
-    /* ЯСКРАВЕ ПІДСВІТЛЕННЯ */
     box-shadow: var(--shadow-neon);
-    /* ПОСИЛЕНИЙ ЕФЕКТ ПІДНЯТТЯ */
     transform: translateY(-3px);
 }
 
@@ -237,11 +234,10 @@
     position: relative;
 }
 
-/* КНОПКА "ДЕТАЛЬНІШЕ" - МЕНШ КИСЛОТНА */
+/* Кнопка "ДЕТАЛЬНІШЕ" */
 .view-details {
     background: var(--bg-accent);
     color: #aaffaa;
-    /* Світло-зелений замість яскравого */
     border: 1px solid rgba(170, 255, 170, 0.3);
     flex: 1;
 }
@@ -253,7 +249,7 @@
     box-shadow: 0 0 8px rgba(170, 255, 170, 0.3);
 }
 
-/* КНОПКА "STL" */
+/* Кнопка "STL" */
 .download-btn {
     background: var(--bg-accent);
     color: var(--accent-primary);
@@ -264,6 +260,49 @@
     background: rgba(68, 255, 0, 0.1);
     border-color: var(--accent-primary);
     box-shadow: 0 0 10px rgba(68, 255, 0, 0.3);
+}
+
+/* Кнопки адміна на картці моделі */
+.model-admin-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.model-admin-actions .btn-warning {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.model-admin-actions .btn-warning:hover {
+    background: rgba(255, 193, 7, 0.25);
+    border-color: #ffc107;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+}
+
+.model-admin-actions .btn-danger {
+    background: rgba(255, 42, 109, 0.15);
+    color: var(--accent-danger);
+    border: 1px solid rgba(255, 42, 109, 0.3);
+}
+
+.model-admin-actions .btn-danger:hover {
+    background: rgba(255, 42, 109, 0.25);
+    border-color: var(--accent-danger);
+    box-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
+}
+
+/* Адаптивність для кнопок адміна */
+@media (max-width: 480px) {
+    .model-admin-actions {
+        flex-direction: column;
+    }
+
+    .model-admin-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .load-more {
