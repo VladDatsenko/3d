@@ -29,6 +29,8 @@ const EventHandlers = {
         this.setupModalEventListeners();
         this.setupCategoryScroll();
         this.setupAdminButton();
+        this.setupShareButton();
+        this.setupHashRouter();
         
         console.log('Обробники подій успішно ініціалізовано');
     },
@@ -352,8 +354,7 @@ const EventHandlers = {
         if (DomElements.mainLink) {
             DomElements.mainLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.resetToMainPage();
-                UIManager.updateNavigation('main');
+                UIManager.resetToMainPage();
             });
         }
         
@@ -541,6 +542,116 @@ const EventHandlers = {
         }
     },
 
+    // Налаштування обробки кнопки "Поділитися"
+    setupShareButton() {
+        // Делегування подій для кнопки копіювання
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.copy-share-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const button = e.target.closest('.copy-share-btn');
+                const url = button.dataset.url;
+                
+                // Спробувати використати Clipboard API
+                navigator.clipboard.writeText(url)
+                    .then(() => {
+                        this.showCopySuccess(button);
+                    })
+                    .catch(() => {
+                        // Fallback для старих браузерів
+                        this.fallbackCopyToClipboard(url, button);
+                    });
+            }
+        });
+    },
+    
+    // Показати успішне копіювання
+    showCopySuccess(button) {
+        const originalHTML = button.innerHTML;
+        const originalBg = button.style.background;
+        
+        button.innerHTML = '<i class="fas fa-check"></i> Скопійовано!';
+        button.style.background = 'var(--accent-primary)';
+        button.style.color = 'white';
+        
+        Utils.showNotification('Посилання скопійовано в буфер обміну');
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.style.background = originalBg;
+            button.style.color = '';
+        }, 2000);
+    },
+    
+    // Fallback для копіювання
+    fallbackCopyToClipboard(text, button) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            this.showCopySuccess(button);
+        } catch (err) {
+            console.error('Не вдалося скопіювати посилання:', err);
+            Utils.showNotification('Помилка копіювання. Скопіюйте посилання вручну.', 'error');
+        }
+        
+        document.body.removeChild(textArea);
+    },
+
+    // Налаштування hash router для відкриття моделей (ВИПРАВЛЕНО)
+    setupHashRouter() {
+        // Слухач зміни hash
+        window.addEventListener('hashchange', () => {
+            this.handleHashChange();
+        });
+    },
+    
+    // Обробка зміни hash (ВИПРАВЛЕНО)
+    handleHashChange() {
+        const hash = window.location.hash.substring(1);
+        
+        if (hash.startsWith('model-')) {
+            const modelId = hash.substring(6);
+            this.openModelFromHash(modelId);
+        } else {
+            // Якщо hash НЕ модель - закриваємо модальне вікно та повертаємося на головну
+            UIManager.closeModelModal();
+            UIManager.resetToMainPage();
+        }
+    },
+    
+    // Відкрити модель з hash (ВИПРАВЛЕНО)
+    openModelFromHash(modelId) {
+        // Перевірити, чи модель існує
+        const model = StateManager.findModel(modelId);
+        if (!model) {
+            console.warn(`Модель з ID ${modelId} не знайдена`);
+            // Видалити неправильний hash та повернутися на головну
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+            UIManager.resetToMainPage();
+            return;
+        }
+        
+        // Відкрити модальне вікно моделі
+        UIManager.showModelModal(modelId);
+        
+        // Прокрутити до модельного вікна
+        setTimeout(() => {
+            const modelModal = document.getElementById('model-modal');
+            if (modelModal) {
+                modelModal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 300);
+    },
+
     // Додати обробники для модального вікна моделі
     attachModalEventListeners(modelId) {
         setTimeout(() => {
@@ -653,23 +764,6 @@ const EventHandlers = {
         Utils.showNotification(
             isCurrentlyFavorite ? 'Модель видалена з обраного' : 'Модель додана до обраного'
         );
-    },
-
-    // Скинути на головну сторінку
-    resetToMainPage() {
-        StateManager.resetFilters();
-        UIManager.updateCategoryButtons('all');
-        UIManager.updateFilterButtons('all');
-        UIManager.updateNavigation('main');
-        UIManager.toggleSections('main');
-        
-        if (DomElements.searchInput) {
-            DomElements.searchInput.value = '';
-        }
-        
-        ModelsManager.applyFilters('', this.categoryTags);
-        UIManager.renderModels();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     },
 
     // Оновити categoryTags

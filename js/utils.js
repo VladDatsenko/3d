@@ -1,3 +1,4 @@
+// js/utils.js
 import { CONFIG } from './config.js';
 
 // Утиліти
@@ -17,6 +18,12 @@ const Utils = {
 
     // Показати сповіщення
     showNotification(message, type = 'success') {
+        // Перевірити, чи є вже сповіщення
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+        
         const notification = document.createElement('div');
         notification.className = 'notification';
         notification.textContent = message;
@@ -106,19 +113,22 @@ const Utils = {
         ];
     },
 
-    // Завантажити категорії з localStorage
+    // Завантажити категорії з localStorage (ВИПРАВЛЕНО - краща обробка помилок)
     loadCategories() {
         try {
             const savedCategories = localStorage.getItem('categories');
             if (savedCategories) {
                 const parsedCategories = JSON.parse(savedCategories);
                 if (Array.isArray(parsedCategories) && parsedCategories.length > 0) {
+                    console.log('Завантажено категорії з localStorage:', parsedCategories.length);
                     return parsedCategories;
                 }
             }
         } catch (e) {
-            console.warn('Помилка завантаження категорій:', e);
+            console.warn('Помилка завантаження категорій з localStorage:', e);
         }
+        
+        console.log('Категорії не знайдені в localStorage, повертаємо null');
         return null;
     },
 
@@ -133,6 +143,7 @@ const Utils = {
             );
             
             localStorage.setItem('categories', JSON.stringify(categoriesToSave));
+            console.log('Категорії збережено в localStorage:', categoriesToSave.length);
             return true;
         } catch (e) {
             console.error('Error saving categories:', e);
@@ -144,7 +155,7 @@ const Utils = {
     cleanupCategories(categories) {
         if (!Array.isArray(categories)) return [];
         
-        return categories.filter(category => 
+        const cleaned = categories.filter(category => 
             category && 
             typeof category === 'object' &&
             category.id && 
@@ -152,6 +163,9 @@ const Utils = {
             typeof category.name === 'string' &&
             category.name.trim() !== ''
         );
+        
+        console.log(`Очищено категорії: з ${categories.length} до ${cleaned.length}`);
+        return cleaned;
     },
 
     // Генерувати ID для нової категорії
@@ -168,6 +182,7 @@ const Utils = {
     saveModels(models) {
         try {
             localStorage.setItem('models_data', JSON.stringify(models));
+            console.log('Моделі збережено в localStorage:', models.length);
             return true;
         } catch (e) {
             console.error('Error saving models:', e);

@@ -5,6 +5,7 @@ import { ModelsManager } from './models.js';
 import { CategoriesManager } from './categories.js';
 import { Utils } from './utils.js';
 import { AVAILABLE_ICONS } from './constants.js';
+import { EventHandlers } from './events.js';
 
 // Функції для оновлення UI
 const UIManager = {
@@ -135,13 +136,56 @@ const UIManager = {
         
         DomElements.modalBody.innerHTML = ModelsManager.createModelDetailsHTML(model);
         DomElements.modelModal.classList.add('show');
+        
+        // Додаємо hash до URL
+        window.location.hash = `model-${modelId}`;
+        
+        // Прокрутити до модального вікна
+        setTimeout(() => {
+            DomElements.modelModal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
     },
 
-    // Закрити модальне вікно моделі
+    // Закрити модальне вікно моделі (ВИПРАВЛЕНО - повернення на головну)
     closeModelModal() {
         if (DomElements.modelModal) {
             DomElements.modelModal.classList.remove('show');
+            
+            // Очищаємо hash, якщо він містить посилання на модель
+            if (window.location.hash.startsWith('#model-')) {
+                // Використовуємо replaceState, щоб не додавати запис в історію
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+            
+            // ПОВЕРТАЄМОСЯ НА ГОЛОВНУ СТОРІНКУ
+            this.resetToMainPage();
         }
+    },
+    
+    // Скинути на головну сторінку (нова функція)
+    resetToMainPage() {
+        // Скинути фільтри
+        StateManager.resetFilters();
+        
+        // Оновити UI
+        this.updateCategoryButtons('all');
+        this.updateFilterButtons('all');
+        this.updateNavigation('main');
+        this.toggleSections('main');
+        
+        // Очистити пошук
+        if (DomElements.searchInput) {
+            DomElements.searchInput.value = '';
+        }
+        
+        // Застосувати фільтри та відобразити моделі
+        const categoryTags = {};
+        ModelsManager.applyFilters('', categoryTags);
+        this.renderModels();
+        this.renderCategories();
+        
+        // Прокрутити до верху
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     },
 
     // Показати модальне вікно категорій

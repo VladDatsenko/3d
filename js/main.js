@@ -33,17 +33,17 @@ async function initApp() {
         StateManager.setModels(models);
         console.log(`Завантажено ${models.length} моделей`);
         
-        // 3. Завантажити категорії
+        // 3. Завантажити категорії (ВИПРАВЛЕНО - завжди завантажуємо категорії)
         console.log('Завантаження категорій...');
         let categories = Utils.loadCategories();
         if (!categories || categories.length === 0) {
-            categories = DEFAULT_CATEGORIES;
-            console.log('Використано стандартні категорії');
+            console.log('Використано стандартні категорії (перше завантаження або дані відсутні)');
+            categories = [...DEFAULT_CATEGORIES]; // Створюємо копію
         }
         
         categories = Utils.cleanupCategories(categories);
         
-        // Переконатися, що є категорія "Всі"
+        // Переконатися, що є категорія "Всі" (ВИПРАВЛЕНО)
         if (!categories.some(cat => cat.id === 'all')) {
             const allCategory = DEFAULT_CATEGORIES.find(cat => cat.id === 'all');
             if (allCategory) {
@@ -60,37 +60,74 @@ async function initApp() {
             EventHandlers.setCategoryTags(categoryTags);
         }
         
-        // 5. Ініціалізувати обробники подій
+        // 5. Застосувати фільтри та відобразити моделі (ВИПРАВЛЕНО - завжди показуємо)
+        console.log('Застосування фільтрів та відображення моделей...');
+        ModelsManager.applyFilters('', categoryTags);
+        
+        // 6. Ініціалізувати обробники подій
         console.log('Ініціалізація обробників подій...');
         EventHandlers.init();
         
-        // 6. Відобразити UI (якщо не в адмін-режимі)
-        if (!AuthSystem.isAuthenticated()) {
-            console.log('Відображення UI для користувача...');
-            UIManager.renderCategories();
-            UIManager.renderModels();
-            UIManager.updateFavoritesCounter();
-        } else {
-            console.log('Користувач автентифікований як адмін. Показуємо адмін-панель...');
-        }
+        // 7. ВІДОБРАЗИТИ UI НЕЗАЛЕЖНО ВІД СТАНУ (ВИПРАВЛЕНО - завжди показуємо)
+        console.log('Відображення UI...');
+        UIManager.renderCategories();
+        UIManager.renderModels();
+        UIManager.updateFavoritesCounter();
         
-        // 7. Додати CSS анімації
+        // Встановити головну сторінку як активну
+        StateManager.setCurrentSection('main');
+        UIManager.toggleSections('main');
+        UIManager.updateNavigation('main');
+        
+        // 8. Перевірити hash при завантаженні (для відкриття моделі з посилання)
+        // ЗРОБИМО ЦЕ ПІСЛЯ ВІДОБРАЖЕННЯ UI
+        setTimeout(() => {
+            checkInitialHash();
+        }, 100);
+        
+        // 9. Додати CSS анімації
         addNotificationStyles();
         addAuthStyles();
+        addShareStyles();
         
-        // 8. Оновити статистику адмін-панелі
+        // 10. Оновити статистику адмін-панелі
         updateAdminStats();
         
-        // 9. Додати обробники для нових модальних вікон
+        // 11. Додати обробники для нових модальних вікон
         setupModalHandlers();
         
-        // 10. Ініціалізація додаткових функцій
+        // 12. Ініціалізація додаткових функцій
         initializeAdditionalFeatures();
         
         console.log('=== Додаток успішно ініціалізовано! ===');
     } catch (error) {
         console.error('Помилка ініціалізації додатка:', error);
         showErrorNotification('Помилка завантаження додатка. Перевірте консоль.');
+    }
+}
+
+// Перевірити початковий hash при завантаженні (ВИПРАВЛЕНО)
+function checkInitialHash() {
+    const hash = window.location.hash.substring(1);
+    
+    if (hash.startsWith('model-')) {
+        const modelId = hash.substring(6);
+        const model = StateManager.findModel(modelId);
+        
+        if (model) {
+            console.log(`Відкриття моделі з hash: ${modelId}`);
+            // Невелика затримка для стабілізації UI
+            setTimeout(() => {
+                UIManager.showModelModal(modelId);
+            }, 300);
+        } else {
+            console.warn(`Модель з ID ${modelId} не знайдена. Очищення hash.`);
+            // Очистити неправильний hash
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+    } else {
+        // Якщо немає hash з моделлю, просто залишаємо головну сторінку
+        console.log('Завантаження головної сторінки...');
     }
 }
 
@@ -193,6 +230,72 @@ function addAuthStyles() {
             .form-row {
                 flex-direction: column;
                 gap: 0.75rem;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Додати стилі для секції поділу
+function addShareStyles() {
+    if (document.querySelector('#share-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'share-styles';
+    style.textContent = `
+        /* Стилі для секції поділу */
+        .modal-share {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-share h4 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+        
+        .share-url-input {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--bg-accent);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: 'Inter', monospace;
+        }
+        
+        .share-url-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        
+        .copy-share-btn {
+            padding: 0.75rem 1.25rem;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-share-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(68, 255, 0, 0.2);
+        }
+        
+        /* Адаптивність для секції поділу */
+        @media (max-width: 768px) {
+            .modal-share > div {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .share-url-input {
+                width: 100%;
+            }
+            
+            .copy-share-btn {
+                width: 100%;
             }
         }
     `;

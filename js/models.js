@@ -146,6 +146,9 @@ const ModelsManager = {
         const isFavorite = state.favorites.includes(model.id);
         const isAdmin = AuthSystem.isAuthenticated();
         
+        // Генеруємо посилання для поділу
+        const shareUrl = `${window.location.origin}${window.location.pathname}#model-${model.id}`;
+        
         return `
         <img src="${model.image}" alt="${model.title}" class="modal-image">
         <h2 class="modal-title">${model.title}</h2>
@@ -181,6 +184,26 @@ const ModelsManager = {
         
         <div class="modal-tags">
             ${model.tags.map(tag => `<span class="model-tag">${tag}</span>`).join('')}
+        </div>
+        
+        <!-- СЕКЦІЯ ПОДІЛИТИСЯ -->
+        <div class="modal-share" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Поділитися моделлю</h4>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="text" 
+                       value="${shareUrl}" 
+                       readonly 
+                       class="share-url-input"
+                       style="flex: 1; padding: 0.75rem; background: var(--bg-accent); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9rem;">
+                <button class="btn btn-primary copy-share-btn" 
+                        data-url="${shareUrl}"
+                        style="padding: 0.75rem 1.25rem; white-space: nowrap;">
+                    <i class="fas fa-copy"></i> Копіювати
+                </button>
+            </div>
+            <small style="display: block; margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+                Відправте це посилання, щоб показати модель іншим
+            </small>
         </div>
         
         <div class="modal-actions">
