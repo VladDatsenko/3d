@@ -12,6 +12,8 @@ import { AuthEvents } from './auth-events.js';
 const EventHandlers = {
     // Глобальні змінні
     categoryTags: {},
+    contextMenu: null,
+    currentContextModelId: null,
     
     // Ініціалізація обробників
     init() {
@@ -23,6 +25,9 @@ const EventHandlers = {
             return;
         }
         
+        // Отримати контекстне меню
+        this.contextMenu = document.getElementById('context-menu');
+        
         this.setupModelEventListeners();
         this.setupCategoryEventListeners();
         this.setupNavigationEventListeners();
@@ -31,8 +36,140 @@ const EventHandlers = {
         this.setupAdminButton();
         this.setupShareButton();
         this.setupHashRouter();
+        this.setupContextMenu();
         
         console.log('Обробники подій успішно ініціалізовано');
+    },
+
+    // Налаштування контекстного меню
+    setupContextMenu() {
+        if (!this.contextMenu) return;
+        
+        // Закриття контекстного меню при кліку поза ним
+        document.addEventListener('click', (e) => {
+            if (this.contextMenu.classList.contains('show')) {
+                this.hideContextMenu();
+            }
+        });
+        
+        // Закриття по ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.contextMenu.classList.contains('show')) {
+                this.hideContextMenu();
+            }
+        });
+        
+        // Обробка кліків по пунктам меню
+        this.contextMenu.querySelectorAll('.context-menu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const action = item.dataset.action;
+                this.handleContextMenuAction(action);
+            });
+        });
+    },
+    
+    // Показати контекстне меню
+    showContextMenu(x, y, modelId) {
+        if (!this.contextMenu || !modelId) return;
+        
+        this.currentContextModelId = modelId;
+        
+        // Підсвітити активну картку
+        const modelCard = document.querySelector(`.model-card[data-id="${modelId}"]`);
+        if (modelCard) {
+            modelCard.classList.add('context-menu-active');
+        }
+        
+        // Позиціонування меню
+        const menuWidth = this.contextMenu.offsetWidth;
+        const menuHeight = this.contextMenu.offsetHeight;
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        let posX = x;
+        let posY = y;
+        
+        // Перевірка, щоб меню не виходило за межі вікна
+        if (x + menuWidth > windowWidth) {
+            posX = windowWidth - menuWidth - 10;
+        }
+        if (y + menuHeight > windowHeight) {
+            posY = windowHeight - menuHeight - 10;
+        }
+        
+        // Показати меню
+        this.contextMenu.style.left = posX + 'px';
+        this.contextMenu.style.top = posY + 'px';
+        this.contextMenu.classList.add('show');
+    },
+    
+    // Приховати контекстне меню
+    hideContextMenu() {
+        if (!this.contextMenu) return;
+        
+        this.contextMenu.classList.remove('show');
+        
+        // Зняти підсвітлення з картки
+        if (this.currentContextModelId) {
+            const modelCard = document.querySelector(`.model-card[data-id="${this.currentContextModelId}"]`);
+            if (modelCard) {
+                modelCard.classList.remove('context-menu-active');
+            }
+            this.currentContextModelId = null;
+        }
+    },
+    
+    // Обробка дій контекстного меню
+    handleContextMenuAction(action) {
+        if (!this.currentContextModelId) return;
+        
+        const modelId = this.currentContextModelId;
+        const shareUrl = `${window.location.origin}${window.location.pathname}#model-${modelId}`;
+        
+        switch (action) {
+            case 'open-new-tab':
+                // Відкрити в новій вкладці
+                window.open(shareUrl, '_blank');
+                Utils.showNotification('Модель відкрита в новій вкладці');
+                break;
+                
+            case 'copy-link':
+                // Копіювати посилання
+                navigator.clipboard.writeText(shareUrl)
+                    .then(() => {
+                        Utils.showNotification('Посилання скопійовано в буфер обміну');
+                    })
+                    .catch(() => {
+                        // Fallback для старих браузерів
+                        const textArea = document.createElement('textarea');
+                        textArea.value = shareUrl;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-999999px';
+                        textArea.style.top = '-999999px';
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        
+                        try {
+                            document.execCommand('copy');
+                            Utils.showNotification('Посилання скопійовано в буфер обміну');
+                        } catch (err) {
+                            Utils.showNotification('Помилка копіювання. Скопіюйте посилання вручну.', 'error');
+                        }
+                        
+                        document.body.removeChild(textArea);
+                    });
+                break;
+                
+            case 'open-modal':
+                // Відкрити у модальному вікні
+                UIManager.showModelModal(modelId);
+                this.attachModalEventListeners(modelId);
+                break;
+        }
+        
+        this.hideContextMenu();
     },
 
     // Налаштування кнопки адміна
@@ -99,12 +236,22 @@ const EventHandlers = {
             DomElements.modelsContainer.addEventListener('click', (e) => {
                 this.handleModelCardClick(e, 'models');
             });
+            
+            // Додаємо обробник ПРАВОЇ кнопки миші для контекстного меню
+            DomElements.modelsContainer.addEventListener('contextmenu', (e) => {
+                this.handleModelCardRightClick(e, 'models');
+            });
         }
         
         // Делегування подій для контейнера обраних
         if (DomElements.favoritesContainer) {
             DomElements.favoritesContainer.addEventListener('click', (e) => {
                 this.handleModelCardClick(e, 'favorites');
+            });
+            
+            // Додаємо обробник ПРАВОЇ кнопки миші для обраного
+            DomElements.favoritesContainer.addEventListener('contextmenu', (e) => {
+                this.handleModelCardRightClick(e, 'favorites');
             });
         }
         
@@ -141,8 +288,42 @@ const EventHandlers = {
         }
     },
 
-    // Обробник кліку по картці моделі
+    // Обробник ПРАВОГО кліку по картці моделі (контекстне меню)
+    handleModelCardRightClick(e, containerType) {
+        e.preventDefault(); // Блокуємо стандартне контекстне меню
+        
+        const target = e.target;
+        const modelCard = target.closest('.model-card');
+        
+        if (modelCard) {
+            const modelId = modelCard.dataset.id;
+            if (modelId) {
+                // Показуємо контекстне меню
+                this.showContextMenu(e.clientX, e.clientY, modelId);
+                
+                // Запобігаємо подальшій обробці
+                e.stopPropagation();
+                return false;
+            }
+        }
+        
+        // Якщо клік не по картці моделі - приховуємо меню
+        this.hideContextMenu();
+    },
+
+    // Обробник ЛІВОГО кліку по картці моделі
     handleModelCardClick(e, containerType) {
+        // Спочатку перевіряємо, чи це не клік по контекстному меню
+        if (e.target.closest('#context-menu')) {
+            return;
+        }
+        
+        // Приховуємо контекстне меню при лівому кліку
+        if (this.contextMenu && this.contextMenu.classList.contains('show')) {
+            this.hideContextMenu();
+            return;
+        }
+        
         const target = e.target;
         const favoriteBtn = target.closest('.favorite-btn');
         const detailsBtn = target.closest('.view-details');
@@ -205,7 +386,7 @@ const EventHandlers = {
             return;
         }
         
-        // Клік по картці моделі
+        // ЛІВИЙ клік по картці моделі
         if (modelCard && !favoriteBtn && !detailsBtn && !downloadBtn && !editBtn && !deleteBtn) {
             const modelId = modelCard.dataset.id;
             if (modelId) {
@@ -328,6 +509,9 @@ const EventHandlers = {
                     UIManager.closeModelModal();
                 }
             }
+            
+            // Закрити контекстне меню, якщо воно відкрите
+            this.hideContextMenu();
         }
     },
 
@@ -503,6 +687,11 @@ const EventHandlers = {
                 if (addModelModal && addModelModal.classList.contains('show')) {
                     addModelModal.classList.remove('show');
                     this.resetEditModelForm();
+                }
+                
+                // Закрити контекстне меню
+                if (this.contextMenu && this.contextMenu.classList.contains('show')) {
+                    this.hideContextMenu();
                 }
             }
         });
