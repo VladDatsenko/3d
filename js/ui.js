@@ -9,6 +9,9 @@ import { EventHandlers } from './events.js';
 
 // Функції для оновлення UI
 const UIManager = {
+    // Змінна для збереження позиції скролу перед відкриттям модального вікна
+    scrollPositionBeforeModal: 0,
+    
     // Відобразити категорії
     renderCategories() {
         if (!DomElements.categoriesScrollbar) return;
@@ -134,22 +137,27 @@ const UIManager = {
         
         if (!DomElements.modelModal || !DomElements.modalBody) return;
         
+        // Зберегти поточну позицію скролу
+        this.scrollPositionBeforeModal = window.scrollY || document.documentElement.scrollTop;
+        
+        // Додати клас для заборони скролу сторінки
+        document.body.classList.add('modal-open');
+        
+        // Показати модальне вікно
         DomElements.modalBody.innerHTML = ModelsManager.createModelDetailsHTML(model);
         DomElements.modelModal.classList.add('show');
         
         // Додаємо hash до URL
         window.location.hash = `model-${modelId}`;
-        
-        // Прокрутити до модального вікна
-        setTimeout(() => {
-            DomElements.modelModal.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
     },
 
-    // Закрити модальне вікно моделі (ВИПРАВЛЕНО - повернення на головну)
+    // Закрити модальне вікно моделі
     closeModelModal() {
         if (DomElements.modelModal) {
             DomElements.modelModal.classList.remove('show');
+            
+            // Видалити клас для дозволу скролу сторінки
+            document.body.classList.remove('modal-open');
             
             // Очищаємо hash, якщо він містить посилання на модель
             if (window.location.hash.startsWith('#model-')) {
@@ -157,12 +165,33 @@ const UIManager = {
                 history.replaceState(null, '', window.location.pathname + window.location.search);
             }
             
-            // ПОВЕРТАЄМОСЯ НА ГОЛОВНУ СТОРІНКУ
-            this.resetToMainPage();
+            // Відновити позицію скролу, якщо потрібно
+            this.restoreScrollPosition();
         }
     },
     
-    // Скинути на головну сторінку (нова функція)
+    // Відновити позицію скролу після закриття модального вікна
+    restoreScrollPosition() {
+        const state = StateManager.getState();
+        
+        // Затримка для того, щоб модальне вікно повністю закрилося
+        setTimeout(() => {
+            // Якщо ми на сторінці обраних - нічого не робимо
+            if (state.currentSection === 'favorites') {
+                return;
+            }
+            
+            // Якщо ми на головній сторінці - відновлюємо позицію скролу
+            if (state.currentSection === 'main') {
+                window.scrollTo({
+                    top: this.scrollPositionBeforeModal,
+                    behavior: 'smooth'
+                });
+            }
+        }, 50);
+    },
+    
+    // Скинути на головну сторінку
     resetToMainPage() {
         // Скинути фільтри
         StateManager.resetFilters();
@@ -194,6 +223,7 @@ const UIManager = {
         CategoriesManager.renderCategoriesEditor();
         if (DomElements.categoriesModal) {
             DomElements.categoriesModal.classList.add('show');
+            document.body.classList.add('modal-open');
         }
     },
 
@@ -201,6 +231,7 @@ const UIManager = {
     closeCategoriesModal() {
         if (DomElements.categoriesModal) {
             DomElements.categoriesModal.classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
     },
 

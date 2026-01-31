@@ -91,6 +91,11 @@
         border-color: var(--accent-primary) !important;
         box-shadow: 0 0 15px rgba(68, 255, 0, 0.3) !important;
       }
+
+      /* Заборонити скрол сторінки при відкритому модальному вікні */
+      body.modal-open {
+        overflow: hidden;
+      }
     </style>
   </head>
   <body class="dark-mode">
@@ -146,8 +151,8 @@
           </div>
 
           <div class="nav-actions">
-            <button class="admin-categories-btn" title="Управління категоріями">
-              <i class="fas fa-sliders-h"></i>
+            <button class="admin-categories-btn" title="Вхід до адмін-панелі">
+              <i class="fas fa-sign-in-alt"></i>
             </button>
           </div>
         </nav>
@@ -212,9 +217,7 @@
         <section id="admin-section" class="admin-section hidden">
           <div class="section-header">
             <h2 class="section-title">Адмін-панель</h2>
-            <button id="admin-logout-btn" class="btn btn-secondary">
-              <i class="fas fa-sign-out-alt"></i> Вийти
-            </button>
+            <!-- Кнопка виходу видалена - тепер одна кнопка в навбарі -->
           </div>
 
           <div class="admin-welcome" id="admin-welcome">

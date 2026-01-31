@@ -262,7 +262,7 @@
 
 /* ===== СТИЛІ ДЛЯ КНОПОК УВІЙТИ/ВИЙТИ ===== */
 #login-submit-btn,
-#admin-logout-btn {
+.admin-categories-btn.logged-in {
     background: var(--bg-accent) !important;
     color: var(--accent-primary) !important;
     border: 1px solid rgba(68, 255, 0, 0.3) !important;
@@ -270,7 +270,7 @@
 }
 
 #login-submit-btn:hover,
-#admin-logout-btn:hover {
+.admin-categories-btn.logged-in:hover {
     background: rgba(68, 255, 0, 0.1) !important;
     border-color: var(--accent-primary) !important;
     transform: translateY(-1px) !important;

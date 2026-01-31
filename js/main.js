@@ -33,7 +33,7 @@ async function initApp() {
         StateManager.setModels(models);
         console.log(`Завантажено ${models.length} моделей`);
         
-        // 3. Завантажити категорії (ВИПРАВЛЕНО - завжди завантажуємо категорії)
+        // 3. Завантажити категорії
         console.log('Завантаження категорій...');
         let categories = Utils.loadCategories();
         if (!categories || categories.length === 0) {
@@ -43,7 +43,7 @@ async function initApp() {
         
         categories = Utils.cleanupCategories(categories);
         
-        // Переконатися, що є категорія "Всі" (ВИПРАВЛЕНО)
+        // Переконатися, що є категорія "Всі"
         if (!categories.some(cat => cat.id === 'all')) {
             const allCategory = DEFAULT_CATEGORIES.find(cat => cat.id === 'all');
             if (allCategory) {
@@ -60,7 +60,7 @@ async function initApp() {
             EventHandlers.setCategoryTags(categoryTags);
         }
         
-        // 5. Застосувати фільтри та відобразити моделі (ВИПРАВЛЕНО - завжди показуємо)
+        // 5. Застосувати фільтри та відобразити моделі
         console.log('Застосування фільтрів та відображення моделей...');
         ModelsManager.applyFilters('', categoryTags);
         
@@ -68,7 +68,7 @@ async function initApp() {
         console.log('Ініціалізація обробників подій...');
         EventHandlers.init();
         
-        // 7. ВІДОБРАЗИТИ UI НЕЗАЛЕЖНО ВІД СТАНУ (ВИПРАВЛЕНО - завжди показуємо)
+        // 7. Відобразити UI
         console.log('Відображення UI...');
         UIManager.renderCategories();
         UIManager.renderModels();
@@ -79,55 +79,24 @@ async function initApp() {
         UIManager.toggleSections('main');
         UIManager.updateNavigation('main');
         
-        // 8. Перевірити hash при завантаженні (для відкриття моделі з посилання)
-        // ЗРОБИМО ЦЕ ПІСЛЯ ВІДОБРАЖЕННЯ UI
-        setTimeout(() => {
-            checkInitialHash();
-        }, 100);
-        
-        // 9. Додати CSS анімації
+        // 8. Додати CSS анімації
         addNotificationStyles();
         addAuthStyles();
         addShareStyles();
         
-        // 10. Оновити статистику адмін-панелі
+        // 9. Оновити статистику адмін-панелі
         updateAdminStats();
         
-        // 11. Додати обробники для нових модальних вікон
+        // 10. Додати обробники для нових модальних вікон
         setupModalHandlers();
         
-        // 12. Ініціалізація додаткових функцій
+        // 11. Ініціалізація додаткових функцій
         initializeAdditionalFeatures();
         
         console.log('=== Додаток успішно ініціалізовано! ===');
     } catch (error) {
         console.error('Помилка ініціалізації додатка:', error);
         showErrorNotification('Помилка завантаження додатка. Перевірте консоль.');
-    }
-}
-
-// Перевірити початковий hash при завантаженні (ВИПРАВЛЕНО)
-function checkInitialHash() {
-    const hash = window.location.hash.substring(1);
-    
-    if (hash.startsWith('model-')) {
-        const modelId = hash.substring(6);
-        const model = StateManager.findModel(modelId);
-        
-        if (model) {
-            console.log(`Відкриття моделі з hash: ${modelId}`);
-            // Невелика затримка для стабілізації UI
-            setTimeout(() => {
-                UIManager.showModelModal(modelId);
-            }, 300);
-        } else {
-            console.warn(`Модель з ID ${modelId} не знайдена. Очищення hash.`);
-            // Очистити неправильний hash
-            history.replaceState(null, '', window.location.pathname + window.location.search);
-        }
-    } else {
-        // Якщо немає hash з моделлю, просто залишаємо головну сторінку
-        console.log('Завантаження головної сторінки...');
     }
 }
 

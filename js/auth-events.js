@@ -19,7 +19,6 @@ const AuthEvents = {
         this.setupAdminButton();
         this.setupLoginForm();
         this.setupResetForm();
-        this.setupLogoutButton();
         this.setupAuthModal();
         this.setupAdminActions();
         this.setupCategoriesModalEvents();
@@ -372,7 +371,7 @@ const AuthEvents = {
     },
 
     // Решта коду залишається без змін (з попередньої версії)
-    // Налаштування кнопки адміна
+    // Налаштування кнопки адміна (тепер вхід/вихід)
     setupAdminButton() {
         this.updateAdminButton();
     },
@@ -385,8 +384,8 @@ const AuthEvents = {
         const isAuthenticated = AuthSystem.isAuthenticated();
         
         if (isAuthenticated) {
-            adminBtn.innerHTML = '<i class="fas fa-user-cog"></i>';
-            adminBtn.title = 'Адмін-панель';
+            adminBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i>';
+            adminBtn.title = 'Вийти з адмін-панелі';
             adminBtn.classList.add('logged-in');
         } else {
             adminBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
@@ -720,19 +719,6 @@ const AuthEvents = {
             setTimeout(() => {
                 resetError.style.animation = 'shake 0.5s';
             }, 10);
-        }
-    },
-
-    // Налаштування кнопки виходу
-    setupLogoutButton() {
-        const adminLogoutBtn = document.getElementById('admin-logout-btn');
-        if (adminLogoutBtn) {
-            adminLogoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                AuthSystem.logout();
-                this.updateAdminButton();
-                UIManager.renderModels(); // Перерендерити моделі, щоб приховати кнопки адміна
-            });
         }
     },
 

@@ -172,11 +172,11 @@ const EventHandlers = {
         this.hideContextMenu();
     },
 
-    // Налаштування кнопки адміна
+    // Налаштування кнопки адміна (тепер вхід/вихід в одній кнопці)
     setupAdminButton() {
         if (DomElements.adminCategoriesBtn) {
             // Оновлюємо іконку кнопки
-            this.updateAdminButtonIcon();
+            AuthEvents.updateAdminButton();
             
             // Додаємо обробник кліку
             DomElements.adminCategoriesBtn.addEventListener('click', (e) => {
@@ -184,8 +184,9 @@ const EventHandlers = {
                 e.stopPropagation();
                 
                 if (AuthSystem.isAuthenticated()) {
-                    // Якщо адмін - переходимо до адмін-панелі
-                    this.showAdminPanel();
+                    // Якщо адмін - виконуємо вихід
+                    AuthSystem.logout();
+                    // Кнопка оновиться через подію authChange
                 } else {
                     // Якщо не адмін - показуємо модалку авторизації
                     AuthEvents.showAuthModal();
@@ -194,38 +195,8 @@ const EventHandlers = {
             
             // Слухаємо зміни стану автентифікації
             document.addEventListener('authChange', () => {
-                this.updateAdminButtonIcon();
+                AuthEvents.updateAdminButton();
             });
-        }
-    },
-
-    // Оновити іконку кнопки адміна
-    updateAdminButtonIcon() {
-        if (!DomElements.adminCategoriesBtn) return;
-        
-        const isAuthenticated = AuthSystem.isAuthenticated();
-        
-        if (isAuthenticated) {
-            DomElements.adminCategoriesBtn.innerHTML = '<i class="fas fa-user-cog"></i>';
-            DomElements.adminCategoriesBtn.title = 'Адмін-панель';
-            DomElements.adminCategoriesBtn.classList.add('logged-in');
-        } else {
-            DomElements.adminCategoriesBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
-            DomElements.adminCategoriesBtn.title = 'Вхід до адмін-панелі';
-            DomElements.adminCategoriesBtn.classList.remove('logged-in');
-        }
-    },
-
-    // Показати модальне вікно авторизації
-    showAuthModal() {
-        AuthEvents.showAuthModal();
-    },
-
-    // Показати адмін-панель
-    showAdminPanel() {
-        const adminSection = document.getElementById('admin-section');
-        if (adminSection) {
-            adminSection.scrollIntoView({ behavior: 'smooth' });
         }
     },
 
@@ -632,6 +603,7 @@ const EventHandlers = {
             authModal.addEventListener('click', (e) => {
                 if (e.target === authModal) {
                     authModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                 }
             });
             
@@ -640,6 +612,7 @@ const EventHandlers = {
             if (authModalClose) {
                 authModalClose.addEventListener('click', () => {
                     authModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                 });
             }
         }
@@ -650,6 +623,7 @@ const EventHandlers = {
             addModelModal.addEventListener('click', (e) => {
                 if (e.target === addModelModal) {
                     addModelModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                     this.resetEditModelForm();
                 }
             });
@@ -658,7 +632,27 @@ const EventHandlers = {
             if (addModalClose) {
                 addModalClose.addEventListener('click', () => {
                     addModelModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                     this.resetEditModelForm();
+                });
+            }
+        }
+        
+        // Закриття модального вікна зміни пароля
+        const changePasswordModal = document.getElementById('change-password-modal');
+        if (changePasswordModal) {
+            changePasswordModal.addEventListener('click', (e) => {
+                if (e.target === changePasswordModal) {
+                    changePasswordModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                }
+            });
+            
+            const changePasswordClose = changePasswordModal.querySelector('.modal-close');
+            if (changePasswordClose) {
+                changePasswordClose.addEventListener('click', () => {
+                    changePasswordModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                 });
             }
         }
@@ -680,13 +674,22 @@ const EventHandlers = {
                 const authModal = document.getElementById('auth-modal');
                 if (authModal && authModal.classList.contains('show')) {
                     authModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                 }
                 
                 // Закрити модальне вікно додавання/редагування моделі
                 const addModelModal = document.getElementById('add-model-modal');
                 if (addModelModal && addModelModal.classList.contains('show')) {
                     addModelModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                     this.resetEditModelForm();
+                }
+                
+                // Закрити модальне вікно зміни пароля
+                const changePasswordModal = document.getElementById('change-password-modal');
+                if (changePasswordModal && changePasswordModal.classList.contains('show')) {
+                    changePasswordModal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                 }
                 
                 // Закрити контекстне меню
@@ -795,15 +798,20 @@ const EventHandlers = {
         document.body.removeChild(textArea);
     },
 
-    // Налаштування hash router для відкриття моделей (ВИПРАВЛЕНО)
+    // Налаштування hash router для відкриття моделей
     setupHashRouter() {
         // Слухач зміни hash
         window.addEventListener('hashchange', () => {
             this.handleHashChange();
         });
+        
+        // Перевірка початкового hash при завантаженні
+        setTimeout(() => {
+            this.handleHashChange();
+        }, 100);
     },
     
-    // Обробка зміни hash (ВИПРАВЛЕНО)
+    // Обробка зміни hash
     handleHashChange() {
         const hash = window.location.hash.substring(1);
         
@@ -811,34 +819,35 @@ const EventHandlers = {
             const modelId = hash.substring(6);
             this.openModelFromHash(modelId);
         } else {
-            // Якщо hash НЕ модель - закриваємо модальне вікно та повертаємося на головну
-            UIManager.closeModelModal();
-            UIManager.resetToMainPage();
+            // Якщо hash НЕ модель - просто закриваємо модальне вікно
+            const modelModal = document.getElementById('model-modal');
+            if (modelModal && modelModal.classList.contains('show')) {
+                UIManager.closeModelModal();
+            }
         }
     },
     
-    // Відкрити модель з hash (ВИПРАВЛЕНО)
+    // Відкрити модель з hash
     openModelFromHash(modelId) {
         // Перевірити, чи модель існує
         const model = StateManager.findModel(modelId);
         if (!model) {
             console.warn(`Модель з ID ${modelId} не знайдена`);
-            // Видалити неправильний hash та повернутися на головну
+            // Видалити неправильний hash
             history.replaceState(null, '', window.location.pathname + window.location.search);
-            UIManager.resetToMainPage();
             return;
+        }
+        
+        // Якщо ми на сторінці обраних, не змінюємо секцію
+        const state = StateManager.getState();
+        if (state.currentSection !== 'favorites') {
+            StateManager.setCurrentSection('main');
+            UIManager.toggleSections('main');
+            UIManager.updateNavigation('main');
         }
         
         // Відкрити модальне вікно моделі
         UIManager.showModelModal(modelId);
-        
-        // Прокрутити до модельного вікна
-        setTimeout(() => {
-            const modelModal = document.getElementById('model-modal');
-            if (modelModal) {
-                modelModal.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }, 300);
     },
 
     // Додати обробники для модального вікна моделі

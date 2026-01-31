@@ -56,9 +56,9 @@ const DomElements = {
     modelsSection: getElement('.models-section'),
     favoritesSection: getElement('.favorites-section'),
     
-    // ===== НОВІ ЕЛЕМЕНТИ ДЛЯ АВТЕНТИФІКАЦІЇ =====
+    // ===== ЕЛЕМЕНТИ ДЛЯ АВТЕНТИФІКАЦІЇ =====
     
-    // Кнопка адміна в навбарі
+    // Кнопка адміна в навбарі (тепер для входу/виходу)
     adminPanelBtn: getElement('.admin-panel-btn'),
     
     // Модальне вікно авторизації
@@ -85,9 +85,8 @@ const DomElements = {
     // Інформація про спроби входу
     loginAttemptsInfo: getElement('#login-attempts-info'),
     
-    // Секція адмін-панелі (буде додана в HTML)
+    // Секція адмін-панелі
     adminSection: getElement('#admin-section'),
-    adminLogoutBtn: getElement('#admin-logout-btn'),
     adminWelcome: getElement('#admin-welcome'),
     
     // Метод для перевірки завантаження критичних елементів
