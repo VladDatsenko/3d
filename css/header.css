@@ -1,4 +1,4 @@
-/* css/header.css */
+/* css/header.css - ПОВНІСТЮ ОНОВЛЕНО ДЛЯ ПОВНОЇ ПІДТРИМКИ ТЕМ */
 
 /* Хедер та навігація */
 .header {
@@ -34,12 +34,12 @@
     background-clip: text;
     transition: var(--transition);
     flex-shrink: 0;
-    filter: drop-shadow(0 0 10px rgba(68, 255, 0, 0.3));
+    filter: drop-shadow(0 0 10px var(--accent-primary));
 }
 
 .logo:hover {
     transform: translateY(-1px);
-    filter: drop-shadow(0 0 15px rgba(68, 255, 0, 0.5));
+    filter: drop-shadow(0 0 15px var(--accent-primary));
 }
 
 .logo-icon {
@@ -68,12 +68,12 @@
 
 .nav-link:hover {
     color: var(--accent-primary);
-    background: rgba(68, 255, 0, 0.08);
+    background: rgba(var(--accent-primary-rgb), 0.08);
 }
 
 .nav-link.active {
     color: var(--accent-primary);
-    background: rgba(68, 255, 0, 0.12);
+    background: rgba(var(--accent-primary-rgb), 0.12);
 }
 
 .nav-link.active::after {
@@ -85,7 +85,7 @@
     height: 2px;
     background: var(--gradient-primary);
     border-radius: 1px;
-    box-shadow: 0 0 5px rgba(68, 255, 0, 0.5);
+    box-shadow: 0 0 5px var(--accent-primary);
 }
 
 .favorites-link {
@@ -98,8 +98,8 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    background: var(--gradient-secondary);
-    color: white;
+    background: var(--gradient-badge);
+    color: var(--badge-color);
     font-size: 0.7rem;
     font-weight: 700;
     width: 18px;
@@ -109,7 +109,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-sm);
-    box-shadow: 0 0 8px rgba(68, 255, 0, 0.5);
+    box-shadow: 0 0 8px var(--accent-primary);
 }
 
 /* Пошук */
@@ -162,7 +162,7 @@
 }
 
 .search-btn:hover {
-    background: rgba(68, 255, 0, 0.15);
+    background: rgba(var(--accent-primary-rgb), 0.15);
     color: var(--accent-primary);
 }
 
@@ -173,6 +173,41 @@
     gap: 0.75rem;
     flex-shrink: 0;
 }
+
+/* КНОПКА ВИБОРУ ТЕМИ */
+.theme-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--accent-primary);
+    transition: var(--transition);
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+}
+
+.theme-btn:hover {
+    background: rgba(var(--accent-primary-rgb), 0.08);
+    border-color: var(--accent-primary);
+    transform: translateY(-1px);
+}
+
+.theme-btn i {
+    font-size: 1rem;
+}
+
+.theme-btn .fa-chevron-down {
+    font-size: 0.8rem;
+    margin-left: 0.25rem;
+}
+
+/* Стилі для випадаючого списку тем (основні в themes.css) */
 
 /* Кнопка адміна - ВХІД/ВИХІД */
 .admin-categories-btn {
@@ -191,10 +226,10 @@
 }
 
 .admin-categories-btn:hover {
-    background: rgba(68, 255, 0, 0.15);
+    background: rgba(var(--accent-primary-rgb), 0.15);
     border-color: var(--accent-primary);
     transform: translateY(-1px);
-    box-shadow: 0 0 10px rgba(68, 255, 0, 0.3);
+    box-shadow: 0 0 10px var(--accent-primary);
 }
 
 /* Стилі для різних станів кнопки */
@@ -205,15 +240,15 @@
 }
 
 .admin-categories-btn.logged-in:hover {
-    background: rgba(68, 255, 0, 0.15);
+    background: rgba(var(--accent-primary-rgb), 0.15);
     transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(68, 255, 0, 0.5);
+    box-shadow: 0 0 20px var(--accent-primary);
 }
 
 .admin-categories-btn.logged-in i {
     color: var(--accent-primary);
-    text-shadow: 0 0 10px rgba(68, 255, 0, 0.7);
-    filter: drop-shadow(0 0 5px rgba(68, 255, 0, 0.5));
+    text-shadow: 0 0 10px var(--accent-primary);
+    filter: drop-shadow(0 0 5px var(--accent-primary));
 }
 
 /* Мобільна адаптація */
@@ -229,6 +264,17 @@
 
     .search-container {
         width: 250px;
+    }
+
+    .theme-btn span {
+        display: none;
+    }
+
+    .theme-btn {
+        padding: 0.5rem;
+        width: 44px;
+        height: 44px;
+        justify-content: center;
     }
 }
 
@@ -255,6 +301,26 @@
         order: 1;
         margin-left: auto;
     }
+
+    .theme-btn {
+        order: 1;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .theme-btn span {
+        display: none;
+    }
+
+    .theme-btn i.fa-palette {
+        margin-right: 0;
+    }
+
+    .theme-btn i.fa-chevron-down {
+        display: none;
+    }
 }
 
 @media (max-width: 480px) {
@@ -268,5 +334,9 @@
 
     .logo span {
         font-size: 1.2rem;
+    }
+
+    .nav-actions {
+        gap: 0.5rem;
     }
 }

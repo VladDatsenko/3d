@@ -16,8 +16,14 @@ const Utils = {
         };
     },
 
-    // Показати сповіщення
+    // Показати сповіщення - МОДИФІКОВАНО: більше не показуємо помилки глобально
     showNotification(message, type = 'success') {
+        // ЯКЩО ЦЕ ПОМИЛКА - НЕ ПОКАЗУЄМО ГЛОБАЛЬНО
+        if (type === 'error') {
+            console.warn('Помилка (не показано глобально):', message);
+            return; // НЕ показуємо глобальні сповіщення про помилки
+        }
+        
         // Перевірити, чи є вже сповіщення
         const existingNotification = document.querySelector('.notification');
         if (existingNotification) {
@@ -28,9 +34,7 @@ const Utils = {
         notification.className = 'notification';
         notification.textContent = message;
         
-        if (type === 'error') {
-            notification.style.background = '#ff2a6d';
-        } else if (type === 'warning') {
+        if (type === 'warning') {
             notification.style.background = '#ffc107';
         }
         
@@ -83,14 +87,14 @@ const Utils = {
                 title: 'Арт-ваза "Хвиля"',
                 author: 'CreativePrints',
                 image: 'https://images.unsplash.com/photo-1589939705388-13b77b3a5d65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Елегантна ваза з унікальним візерунком хвилі.',
+                description: 'Елегантна ваза з унікальним візерунком хвилі, ідеальна для сучасного інтер\'єру. Модель оптимізована для друку без підтримок.',
                 printTime: '8 годин',
                 weight: '145 г',
                 difficulty: 'Середня',
                 downloads: '2.5K',
-                dimensions: '120x120x180 мм',
+                dimensions: '120×120×180 мм',
                 formats: ['STL', '3MF'],
-                tags: ['декор', 'ваза', 'мистецтво', 'сучасний', 'арт'],
+                tags: ['декор', 'ваза', 'мистецтво', 'сучасний', 'арт', 'дім', 'домашній'],
                 featured: true,
                 isNew: false
             },
@@ -99,14 +103,14 @@ const Utils = {
                 title: 'Підставка для телефону',
                 author: 'GadgetLab',
                 image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Ергономічна підставка з регульованим кутом нахилу.',
+                description: 'Ергономічна підставка з регульованим кутом нахилу. Підходить для всіх смартфонів. Друкується без підтримок.',
                 printTime: '3 години',
                 weight: '65 г',
                 difficulty: 'Легка',
                 downloads: '8.7K',
-                dimensions: '80x60x40 мм',
+                dimensions: '80×60×40 мм',
                 formats: ['STL', 'STEP'],
-                tags: ['гаджет', 'стіл', 'організація', 'аксесуар', 'техніка'],
+                tags: ['гаджет', 'стіл', 'організація', 'повсякденність', 'аксесуар', 'техніка'],
                 featured: true,
                 isNew: false
             }

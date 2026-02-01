@@ -1,4 +1,4 @@
-/* Адаптивні стилі */
+/* Адаптивні стилі - ОНОВЛЕНО */
 @media (max-width: 1200px) {
     .nav {
         grid-template-columns: auto 1fr;

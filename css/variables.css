@@ -1,106 +1,115 @@
-/* css/variables.css */
+/* css/variables.css - ОНОВЛЕНО */
 /* Змінні та теми */
-:root {
-    /* Темна тема за замовчуванням */
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #12121a;
-    --bg-card: #1a1a25;
-    --bg-accent: #1e1e2e;
 
-    --text-primary: #e2e2f0;
-    --text-secondary: #8a8aa3;
-    --text-muted: #6a6a8a;
+/* ВСІ ОСНОВНІ ЗМІННІ ПЕРЕМІЩЕНІ В themes.css */
+/* Цей файл тепер лише для утиліт та режимів */
 
-    /* ЯСКРАВІ КИСЛОТНО-ЗЕЛЕНІ КОЛЬОРИ */
-    --razer-green-light: #44ff00;
-    /* Найяскравіший зелений */
-    --razer-green-dark: #00ff44;
-    /* Яскраво-зелений */
-    --razer-green-neon: #44ff44;
-    /* Неоновий зелений */
-
-    /* Акцентні кольори */
-    --accent-primary: var(--razer-green-light);
-    --accent-secondary: #000000;
-    --accent-danger: #ff2a6d;
-
-    /* Градієнти */
-    --gradient-primary: linear-gradient(135deg, var(--razer-green-dark) 0%, var(--razer-green-light) 100%);
-    --gradient-secondary: linear-gradient(135deg, var(--razer-green-light) 0%, var(--razer-green-neon) 100%);
-    --gradient-card: linear-gradient(145deg, #1a1a25 0%, #222235 100%);
-    --gradient-category: linear-gradient(135deg, var(--razer-green-dark) 0%, var(--razer-green-light) 100%);
-
-    /* ЯСКРАВІШІ ТІНІ */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-    --shadow-neon: 0 0 25px rgba(68, 255, 0, 0.7), 0 0 50px rgba(0, 255, 68, 0.4);
-    --shadow-accent: 0 0 30px rgba(68, 255, 0, 0.8);
-
-    /* Нові змінні для покращення читабельності */
-    --text-on-green: #ffffff;
-    --text-shadow-green: 0 1px 4px rgba(0, 0, 0, 0.7);
-    --inset-shadow-light: inset 0 1px 3px rgba(255, 255, 255, 0.2);
-    --inset-shadow-dark: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
-
-    /* Змінні для кнопок входу/виходу */
-    --btn-auth-bg: var(--bg-accent);
-    --btn-auth-text: var(--accent-primary);
-    --btn-auth-border: rgba(68, 255, 0, 0.3);
-    --btn-auth-shadow: 0 0 8px rgba(68, 255, 0, 0.2);
-    --btn-auth-hover-bg: rgba(68, 255, 0, 0.1);
-    --btn-auth-hover-border: var(--accent-primary);
-    --btn-auth-hover-shadow: 0 0 12px rgba(68, 255, 0, 0.3);
-
-    /* Радіуси */
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-    --radius-xl: 18px;
-    --radius-full: 999px;
-
-    /* Переходи */
-    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-
-    /* Розміри */
-    --header-height: 140px;
-    --scrollbar-height: 48px;
-}
-
+/* СВІТЛА ТЕМА (БАЗОВІ НАЛАШТУВАННЯ) */
 .light-mode {
-    /* Світла тема */
-    --bg-primary: #f8f9fa;
-    --bg-secondary: #ffffff;
-    --bg-card: #ffffff;
-    --bg-accent: #f1f3f9;
-
-    --text-primary: #1a1a2e;
-    --text-secondary: #4a4a6a;
-    --text-muted: #6a6a8a;
-
-    /* Світла версія яскравих кольорів */
-    --razer-green-light: #00ff44;
-    --razer-green-dark: #00cc44;
-    --razer-green-neon: #00ff44;
-
-    /* Оновлені змінні для світлої теми */
-    --text-on-green: #0a0a0f;
-    --text-shadow-green: 0 1px 2px rgba(0, 0, 0, 0.1);
+    --text-on-accent: #0a0a0f;
+    --text-shadow-accent: 0 1px 2px rgba(0, 0, 0, 0.1);
     --inset-shadow-light: inset 0 1px 3px rgba(255, 255, 255, 0.3);
     --inset-shadow-dark: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-
-    /* Змінні для кнопок входу/виходу (світла тема) */
-    --btn-auth-bg: var(--bg-accent);
-    --btn-auth-text: var(--accent-primary);
-    --btn-auth-border: rgba(0, 255, 68, 0.2);
-    --btn-auth-shadow: 0 0 6px rgba(0, 255, 68, 0.15);
-    --btn-auth-hover-bg: rgba(0, 255, 68, 0.08);
-    --btn-auth-hover-border: var(--accent-primary);
-    --btn-auth-hover-shadow: 0 0 10px rgba(0, 255, 68, 0.25);
-
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
-    --shadow-neon: 0 0 20px rgba(0, 255, 68, 0.5);
-    --shadow-accent: 0 0 25px rgba(0, 255, 68, 0.6);
+}
+
+/* ДОДАТКОВІ УТИЛІТНІ ЗМІННІ */
+:root {
+    /* Стандартні тіні для всіх тем */
+    --shadow-standard: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+    /* Стандартні анімації */
+    --transition-fast: all 0.15s ease;
+    --transition-slow: all 0.4s ease;
+
+    /* Стандартні відступи */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Стандартні шрифти */
+    --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-mono: 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+}
+
+/* КЛАСИ ДЛЯ ПРИХОВАННЯ */
+.hidden {
+    display: none !important;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* АНІМАЦІЇ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
 }

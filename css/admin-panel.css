@@ -1,4 +1,4 @@
-/* css/admin-panel.css */
+/* css/admin-panel.css - ПОВНІСТЮ ОНОВЛЕНО ДЛЯ ПОВНОЇ ПІДТРИМКИ ТЕМ */
 /* Цей файл додається в style.css через @import */
 
 /* Адмін-панель */
@@ -22,7 +22,7 @@
     padding: 1.5rem;
     border-radius: var(--radius-lg);
     margin-bottom: 2rem;
-    border: 1px solid rgba(68, 255, 0, 0.3);
+    border: 1px solid rgba(var(--accent-primary-rgb), 0.3);
     box-shadow: var(--shadow-md);
 }
 
@@ -30,7 +30,7 @@
     color: var(--accent-primary);
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
-    text-shadow: 0 0 10px rgba(68, 255, 0, 0.3);
+    text-shadow: 0 0 10px rgba(var(--accent-primary-rgb), 0.3);
 }
 
 .admin-welcome p {
@@ -50,7 +50,7 @@
     margin-bottom: 1.5rem;
     color: var(--text-primary);
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(68, 255, 0, 0.4);
+    border-bottom: 2px solid rgba(var(--accent-primary-rgb), 0.4);
 }
 
 .stats-grid {
@@ -66,7 +66,7 @@
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    border: 1px solid rgba(68, 255, 0, 0.2);
+    border: 1px solid rgba(var(--accent-primary-rgb), 0.2);
     transition: var(--transition);
     box-shadow: var(--shadow-sm);
 }
@@ -88,8 +88,8 @@
     font-size: 1.75rem;
     color: white;
     flex-shrink: 0;
-    text-shadow: var(--text-shadow-green);
-    box-shadow: 0 0 15px rgba(68, 255, 0, 0.4);
+    text-shadow: var(--text-shadow-accent);
+    box-shadow: 0 0 15px rgba(var(--accent-primary-rgb), 0.4);
 }
 
 .stat-info {
@@ -101,12 +101,11 @@
 .stat-value {
     font-size: 2rem;
     font-weight: 800;
-    color: #aaffaa;
-    /* ЯСКРАВО-ЗЕЛЕНИЙ ДЛЯ КРАЩОГО КОНТРАСТУ */
+    color: var(--stat-value-color);
     line-height: 1;
     margin-bottom: 0.25rem;
-    text-shadow: 0 0 10px rgba(170, 255, 170, 0.5);
-    filter: drop-shadow(0 0 5px rgba(68, 255, 0, 0.4));
+    text-shadow: 0 0 10px rgba(var(--accent-light-rgb), 0.5);
+    filter: drop-shadow(0 0 5px rgba(var(--accent-primary-rgb), 0.4));
 }
 
 .stat-label {
@@ -152,7 +151,7 @@
     font-size: 2.5rem;
     color: var(--accent-primary);
     transition: var(--transition);
-    filter: drop-shadow(0 0 5px rgba(68, 255, 0, 0.3));
+    filter: drop-shadow(0 0 5px rgba(var(--accent-primary-rgb), 0.3));
 }
 
 .action-btn span {
@@ -183,8 +182,8 @@
 .form-input {
     padding: 0.875rem 1.25rem;
     border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: var(--bg-card);
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
     color: var(--text-primary);
     font-size: 1rem;
     transition: var(--transition);
@@ -192,9 +191,9 @@
 }
 
 .form-input:focus {
-    border-color: var(--accent-primary);
+    border-color: var(--input-focus-border);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(68, 255, 0, 0.3);
+    box-shadow: var(--input-focus-shadow);
 }
 
 .form-actions {
@@ -211,7 +210,7 @@
     padding: 1.25rem;
     border-radius: var(--radius-lg);
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(68, 255, 0, 0.2);
+    border: 1px solid rgba(var(--accent-primary-rgb), 0.2);
 }
 
 .security-question p {
@@ -221,7 +220,7 @@
 
 .security-question strong {
     color: var(--accent-primary);
-    text-shadow: 0 0 5px rgba(68, 255, 0, 0.3);
+    text-shadow: 0 0 5px rgba(var(--accent-primary-rgb), 0.3);
 }
 
 .error-message {
@@ -235,13 +234,13 @@
 }
 
 .success-message {
-    background: rgba(68, 255, 0, 0.15);
+    background: rgba(var(--accent-primary-rgb), 0.15);
     color: var(--accent-primary);
     padding: 1rem 1.25rem;
     border-radius: var(--radius-md);
     font-weight: 600;
-    border: 1px solid rgba(68, 255, 0, 0.4);
-    text-shadow: 0 0 5px rgba(68, 255, 0, 0.3);
+    border: 1px solid rgba(var(--accent-primary-rgb), 0.4);
+    text-shadow: 0 0 5px rgba(var(--accent-primary-rgb), 0.3);
 }
 
 .attempts-info {
@@ -263,37 +262,37 @@
 /* ===== СТИЛІ ДЛЯ КНОПОК УВІЙТИ/ВИЙТИ ===== */
 #login-submit-btn,
 .admin-categories-btn.logged-in {
-    background: var(--bg-accent) !important;
-    color: var(--accent-primary) !important;
-    border: 1px solid rgba(68, 255, 0, 0.3) !important;
-    box-shadow: 0 0 8px rgba(68, 255, 0, 0.2) !important;
+    background: var(--btn-auth-bg) !important;
+    color: var(--btn-auth-color) !important;
+    border: 1px solid var(--btn-auth-border) !important;
+    box-shadow: var(--btn-auth-shadow) !important;
 }
 
 #login-submit-btn:hover,
 .admin-categories-btn.logged-in:hover {
-    background: rgba(68, 255, 0, 0.1) !important;
+    background: rgba(var(--accent-primary-rgb), 0.1) !important;
     border-color: var(--accent-primary) !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 0 12px rgba(68, 255, 0, 0.3) !important;
+    box-shadow: var(--shadow-button) !important;
 }
 
 /* Кнопки "Скинути пароль" */
 #reset-submit-btn,
 #change-password-submit-btn,
 #add-model-submit-btn {
-    background: var(--bg-accent) !important;
-    color: var(--accent-primary) !important;
-    border: 1px solid rgba(68, 255, 0, 0.3) !important;
-    box-shadow: 0 0 8px rgba(68, 255, 0, 0.2) !important;
+    background: var(--btn-auth-bg) !important;
+    color: var(--btn-auth-color) !important;
+    border: 1px solid var(--btn-auth-border) !important;
+    box-shadow: var(--btn-auth-shadow) !important;
 }
 
 #reset-submit-btn:hover,
 #change-password-submit-btn:hover,
 #add-model-submit-btn:hover {
-    background: rgba(68, 255, 0, 0.1) !important;
+    background: rgba(var(--accent-primary-rgb), 0.1) !important;
     border-color: var(--accent-primary) !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 0 12px rgba(68, 255, 0, 0.3) !important;
+    box-shadow: var(--shadow-button) !important;
 }
 
 /* Кнопки скасування */
@@ -301,7 +300,7 @@
 #change-password-cancel-btn {
     background: var(--bg-card) !important;
     color: var(--text-secondary) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--input-border) !important;
 }
 
 #add-model-cancel-btn:hover,

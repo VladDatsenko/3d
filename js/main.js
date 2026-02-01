@@ -1,4 +1,4 @@
-// js/main.js - головний файл
+// js/main.js - головний файл (ОНОВЛЕНО - видалено глобальні сповіщення про помилки)
 console.log('main.js запущено');
 
 // Статичні імпорти
@@ -96,11 +96,12 @@ async function initApp() {
         console.log('=== Додаток успішно ініціалізовано! ===');
     } catch (error) {
         console.error('Помилка ініціалізації додатка:', error);
-        showErrorNotification('Помилка завантаження додатка. Перевірте консоль.');
+        // ВИДАЛЕНО: showErrorNotification('Помилка завантаження додатка. Перевірте консоль.');
+        console.error('Помилка завантаження додатка:', error);
     }
 }
 
-// Додати стилі для сповіщень
+// Додати стилі для сповіщень (лише для успішних сповіщень)
 function addNotificationStyles() {
     if (document.querySelector('#notification-styles')) return;
     
@@ -142,14 +143,12 @@ function addNotificationStyles() {
         .notification.warning {
             background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
         }
-        .notification.error {
-            background: linear-gradient(135deg, #ff2a6d 0%, #c2185b 100%);
-        }
+        /* ВИДАЛЕНО: стилі для помилок - вони більше не показуються глобально */
     `;
     document.head.appendChild(style);
 }
 
-// Додати стилі для автентифікації
+// Додати стилі для автентифікації та тем
 function addAuthStyles() {
     if (document.querySelector('#auth-styles')) return;
     
@@ -158,14 +157,52 @@ function addAuthStyles() {
     style.textContent = `
         /* Стилі для адмін-панелі та форм вже в admin-panel.css */
         
-        /* Додаткові стилі для нових модальних вікон */
+        /* Додаткові стилі для сповіщень тем */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            color: var(--accent-primary);
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-md);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--accent-primary);
+            font-weight: 600;
+            max-width: 300px;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
         .success-message {
-            background: rgba(68, 214, 44, 0.1);
+            background: rgba(var(--accent-primary-rgb), 0.1);
             color: var(--accent-primary);
             padding: 1rem 1.25rem;
             border-radius: var(--radius-md);
             font-weight: 600;
-            border: 1px solid rgba(68, 214, 44, 0.3);
+            border: 1px solid rgba(var(--accent-primary-rgb), 0.3);
             animation: fadeIn 0.3s ease;
         }
         
@@ -249,7 +286,7 @@ function addShareStyles() {
         
         .copy-share-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(68, 255, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(var(--accent-primary-rgb), 0.2);
         }
         
         /* Адаптивність для секції поділу */
@@ -319,7 +356,8 @@ function initializeAdditionalFeatures() {
     // Перевірка підтримки Web Storage
     if (!window.localStorage) {
         console.warn('LocalStorage не підтримується. Деякі функції можуть не працювати.');
-        Utils.showNotification('Ваш браузер не підтримує збереження даних. Рекомендуємо оновити браузер.', 'warning');
+        // ВИДАЛЕНО: Utils.showNotification('Ваш браузер не підтримує збереження даних. Рекомендуємо оновити браузер.', 'warning');
+        console.warn('Ваш браузер не підтримує збереження даних. Рекомендуємо оновити браузер.');
     }
     
     // Перевірка мережі
@@ -329,7 +367,8 @@ function initializeAdditionalFeatures() {
     
     window.addEventListener('offline', () => {
         console.log('Мережа: офлайн');
-        Utils.showNotification('Ви в режимі офлайн. Деякі функції можуть бути обмежені.', 'warning');
+        // ВИДАЛЕНО: Utils.showNotification('Ви в режимі офлайн. Деякі функції можуть бути обмежені.', 'warning');
+        console.warn('Ви в режимі офлайн. Деякі функції можуть бути обмежені.');
     });
     
     // Відстеження подій для статистики (опційно)
@@ -451,18 +490,18 @@ function updateAdminStats() {
     }, 500);
 }
 
-// Функція для сповіщення про помилку
-function showErrorNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification error';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 5000);
-}
+// Функція для сповіщення про помилку - ВИДАЛЕНО (більше не використовується)
+// function showErrorNotification(message) {
+//     const notification = document.createElement('div');
+//     notification.className = 'notification error';
+//     notification.textContent = message;
+//     document.body.appendChild(notification);
+//     
+//     setTimeout(() => {
+//         notification.style.animation = 'slideOut 0.3s ease';
+//         setTimeout(() => notification.remove(), 300);
+//     }, 5000);
+// }
 
 // Функція для перевірки оновлень даних
 async function checkForUpdates() {
@@ -526,7 +565,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(error => {
             console.error('Помилка ініціалізації:', error);
             removeLoadingScreen();
-            showErrorNotification('Критична помилка ініціалізації. Будь ласка, перезавантажте сторінку.');
+            // ВИДАЛЕНО: showErrorNotification('Критична помилка ініціалізації. Будь ласка, перезавантажте сторінку.');
+            console.error('Критична помилка ініціалізації. Будь ласка, перезавантажте сторінку.', error);
         });
     }, 100);
 });
@@ -537,7 +577,8 @@ window.addEventListener('error', (event) => {
     
     // Показати користувачеві дружнє повідомлення
     if (event.error && event.error.message && event.error.message.includes('fetch')) {
-        showErrorNotification('Проблема з мережею. Перевірте підключення до інтернету.');
+        // ВИДАЛЕНО: showErrorNotification('Проблема з мережею. Перевірте підключення до інтернету.');
+        console.error('Проблема з мережею. Перевірте підключення до інтернету.');
     }
 });
 
@@ -597,4 +638,4 @@ function removeLoadingScreen() {
 }
 
 // Експорт функцій для тестування (якщо потрібно)
-export { initApp, updateAdminStats, showErrorNotification };
+export { initApp, updateAdminStats };

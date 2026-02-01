@@ -98,7 +98,7 @@
       }
     </style>
   </head>
-  <body class="dark-mode">
+  <body class="dark-mode theme-green">
     <!-- Контекстне меню -->
     <div id="context-menu" class="context-menu">
       <div class="context-menu-item" data-action="open-new-tab">
@@ -151,6 +151,37 @@
           </div>
 
           <div class="nav-actions">
+            <!-- КНОПКА ВИБОРУ ТЕМИ -->
+            <div class="theme-switcher">
+              <button class="theme-btn" title="Змінити колірну тему">
+                <i class="fas fa-palette"></i>
+                <span>Тема</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="theme-dropdown">
+                <div class="theme-option active" data-theme="green">
+                  <div class="theme-color-preview" data-theme="green"></div>
+                  <span>Зелена</span>
+                </div>
+                <div class="theme-option" data-theme="pink">
+                  <div class="theme-color-preview" data-theme="pink"></div>
+                  <span>Рожева</span>
+                </div>
+                <div class="theme-option" data-theme="blue">
+                  <div class="theme-color-preview" data-theme="blue"></div>
+                  <span>Блакитна</span>
+                </div>
+                <div class="theme-option" data-theme="gold">
+                  <div class="theme-color-preview" data-theme="gold"></div>
+                  <span>Золота</span>
+                </div>
+                <div class="theme-option" data-theme="purple">
+                  <div class="theme-color-preview" data-theme="purple"></div>
+                  <span>Фіолетова</span>
+                </div>
+              </div>
+            </div>
+
             <button class="admin-categories-btn" title="Вхід до адмін-панелі">
               <i class="fas fa-sign-in-alt"></i>
             </button>
@@ -819,6 +850,9 @@
         </div>
       </div>
     </footer>
+
+    <!-- JavaScript файли -->
+    <script src="js/themes.js" defer></script>
     <script src="js/main.js" type="module"></script>
   </body>
 </html>

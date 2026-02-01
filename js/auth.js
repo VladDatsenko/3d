@@ -151,7 +151,8 @@ const AuthSystem = {
             // Перевіряємо чи не перевищено ліміт спроб
             if (this.state.loginAttempts >= CONFIG.admin.maxLoginAttempts) {
                 this.state.lockedUntil = Date.now() + CONFIG.admin.lockoutDuration;
-                Utils.showNotification(`Забагато невдалих спроб. Система заблокована на ${CONFIG.admin.lockoutDuration / 60000} хвилин.`, 'error');
+                // ВИДАЛЕНО: Utils.showNotification(`Забагато невдалих спроб. Система заблокована на ${CONFIG.admin.lockoutDuration / 60000} хвилин.`, 'error');
+                console.warn(`Забагато невдалих спроб. Система заблокована на ${CONFIG.admin.lockoutDuration / 60000} хвилин.`);
             }
             
             this.saveAuthState();
@@ -181,7 +182,8 @@ const AuthSystem = {
             this.dispatchAuthChange();
             return result;
         } else if (!result.locked) {
-            Utils.showNotification(result.message, 'error');
+            // ВИДАЛЕНО: Utils.showNotification(result.message, 'error');
+            // Залишаємо лише повернення результату - форма сама покаже помилку
         }
         return result;
     },

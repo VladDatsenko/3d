@@ -1,0 +1,459 @@
+/* css/themes.css - ПОВНІСТЮ ОНОВЛЕНО ДЛЯ ПОВНОЇ ПІДТРИМКИ ТЕМ */
+/* Цей файл додається в style.css через @import */
+
+/* === КОЛЬОРОВІ ТЕМИ ДЛЯ САЙТУ === */
+
+/* БАЗОВІ ЗМІННІ ДЛЯ ВСІХ ТЕМ */
+:root {
+    /* Загальні змінні для всіх тем */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --radius-full: 999px;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --header-height: 140px;
+    --scrollbar-height: 48px;
+    --text-on-accent: #ffffff;
+    --text-shadow-accent: 0 1px 4px rgba(0, 0, 0, 0.7);
+    --inset-shadow-light: inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    --inset-shadow-dark: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* 1. ЗЕЛЕНА ТЕМА (стандартна) */
+.theme-green {
+    --accent-primary: #44ff00;
+    --accent-secondary: #000000;
+    --accent-light: #aaffaa;
+    --accent-dark: #00aa00;
+    --accent-neon: #44ff44;
+
+    /* ФОНИ */
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-card: #1a1a25;
+    --bg-accent: #1e1e2e;
+
+    /* ТЕКСТ */
+    --text-primary: #e2e2f0;
+    --text-secondary: #8a8aa3;
+    --text-muted: #6a6a8a;
+
+    /* ГРАДІЄНТИ */
+    --gradient-primary: linear-gradient(135deg, #00ff44 0%, #44ff00 100%);
+    --gradient-secondary: linear-gradient(135deg, #44ff00 0%, #44ff44 100%);
+    --gradient-card: linear-gradient(145deg, #1a1a25 0%, #222235 100%);
+    --gradient-category: linear-gradient(135deg, #00ff44 0%, #44ff00 100%);
+    --gradient-button: linear-gradient(135deg, rgba(0, 255, 68, 0.7) 0%, rgba(68, 255, 0, 0.7) 100%);
+    --gradient-badge: linear-gradient(135deg, #44ff00 0%, #44ff44 100%);
+
+    /* ТІНІ ТА ПІДСВІТЛЕННЯ */
+    --shadow-neon: 0 0 25px rgba(68, 255, 0, 0.7), 0 0 50px rgba(0, 255, 68, 0.4);
+    --shadow-accent: 0 0 30px rgba(68, 255, 0, 0.8);
+    --shadow-button: 0 0 15px rgba(170, 255, 170, 0.4);
+    --shadow-card: 0 8px 32px rgba(68, 255, 0, 0.15);
+
+    /* КНОПКИ ТА ІНТЕРАКТИВНІ ЕЛЕМЕНТИ */
+    --btn-primary-bg: linear-gradient(135deg, rgba(0, 255, 68, 0.7) 0%, rgba(68, 255, 0, 0.7) 100%);
+    --btn-primary-color: var(--text-on-accent);
+    --btn-primary-border: transparent;
+    --btn-primary-shadow: 0 0 10px rgba(170, 255, 170, 0.4);
+
+    --btn-secondary-bg: var(--bg-accent);
+    --btn-secondary-color: var(--accent-light);
+    --btn-secondary-border: rgba(170, 255, 170, 0.3);
+    --btn-secondary-shadow: 0 0 8px rgba(170, 255, 170, 0.2);
+
+    --btn-auth-bg: var(--bg-accent);
+    --btn-auth-color: var(--accent-primary);
+    --btn-auth-border: rgba(68, 255, 0, 0.3);
+    --btn-auth-shadow: 0 0 8px rgba(68, 255, 0, 0.2);
+
+    /* СТАТИСТИКА ТА БАДЖІ */
+    --stat-value-color: #aaffaa;
+    --badge-bg: var(--gradient-badge);
+    --badge-color: var(--text-on-accent);
+
+    /* ПОЛЯ ВВОДУ */
+    --input-bg: var(--bg-card);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus-border: var(--accent-primary);
+    --input-focus-shadow: 0 0 0 3px rgba(68, 255, 0, 0.3);
+
+    /* СИСТЕМНІ ЗМІННІ */
+    --accent-primary-rgb: 68, 255, 0;
+    --accent-light-rgb: 170, 255, 170;
+}
+
+/* 2. РОЖЕВА ТЕМА */
+.theme-pink {
+    --accent-primary: #ff00aa;
+    --accent-secondary: #000000;
+    --accent-light: #ffaadd;
+    --accent-dark: #cc0088;
+    --accent-neon: #ff44aa;
+
+    --bg-primary: #0f0a0f;
+    --bg-secondary: #1a121a;
+    --bg-card: #251a25;
+    --bg-accent: #2e1e2e;
+
+    --text-primary: #f0e2f0;
+    --text-secondary: #a38aa3;
+    --text-muted: #8a6a8a;
+
+    --gradient-primary: linear-gradient(135deg, #ff0088 0%, #ff00aa 100%);
+    --gradient-secondary: linear-gradient(135deg, #ff00aa 0%, #ff44aa 100%);
+    --gradient-card: linear-gradient(145deg, #251a25 0%, #352235 100%);
+    --gradient-category: linear-gradient(135deg, #ff0088 0%, #ff00aa 100%);
+    --gradient-button: linear-gradient(135deg, rgba(255, 0, 136, 0.7) 0%, rgba(255, 0, 170, 0.7) 100%);
+    --gradient-badge: linear-gradient(135deg, #ff00aa 0%, #ff44aa 100%);
+
+    --shadow-neon: 0 0 25px rgba(255, 0, 170, 0.7), 0 0 50px rgba(255, 0, 136, 0.4);
+    --shadow-accent: 0 0 30px rgba(255, 0, 170, 0.8);
+    --shadow-button: 0 0 15px rgba(255, 170, 221, 0.4);
+    --shadow-card: 0 8px 32px rgba(255, 0, 170, 0.15);
+
+    --btn-primary-bg: linear-gradient(135deg, rgba(255, 0, 136, 0.7) 0%, rgba(255, 0, 170, 0.7) 100%);
+    --btn-primary-color: var(--text-on-accent);
+    --btn-primary-border: transparent;
+    --btn-primary-shadow: 0 0 10px rgba(255, 170, 221, 0.4);
+
+    --btn-secondary-bg: var(--bg-accent);
+    --btn-secondary-color: var(--accent-light);
+    --btn-secondary-border: rgba(255, 170, 221, 0.3);
+    --btn-secondary-shadow: 0 0 8px rgba(255, 170, 221, 0.2);
+
+    --btn-auth-bg: var(--bg-accent);
+    --btn-auth-color: var(--accent-primary);
+    --btn-auth-border: rgba(255, 0, 170, 0.3);
+    --btn-auth-shadow: 0 0 8px rgba(255, 0, 170, 0.2);
+
+    --stat-value-color: #ffaadd;
+    --badge-bg: var(--gradient-badge);
+    --badge-color: var(--text-on-accent);
+
+    --input-bg: var(--bg-card);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus-border: var(--accent-primary);
+    --input-focus-shadow: 0 0 0 3px rgba(255, 0, 170, 0.3);
+
+    --accent-primary-rgb: 255, 0, 170;
+    --accent-light-rgb: 255, 170, 221;
+}
+
+/* 3. БЛАКИТНА ТЕМА */
+.theme-blue {
+    --accent-primary: #00aaff;
+    --accent-secondary: #000000;
+    --accent-light: #aaddff;
+    --accent-dark: #0088cc;
+    --accent-neon: #44aaff;
+
+    --bg-primary: #0a0f0f;
+    --bg-secondary: #121a1a;
+    --bg-card: #1a2525;
+    --bg-accent: #1e2e2e;
+
+    --text-primary: #e2f0f0;
+    --text-secondary: #8aa3a3;
+    --text-muted: #6a8a8a;
+
+    --gradient-primary: linear-gradient(135deg, #0088ff 0%, #00aaff 100%);
+    --gradient-secondary: linear-gradient(135deg, #00aaff 0%, #44aaff 100%);
+    --gradient-card: linear-gradient(145deg, #1a2525 0%, #223535 100%);
+    --gradient-category: linear-gradient(135deg, #0088ff 0%, #00aaff 100%);
+    --gradient-button: linear-gradient(135deg, rgba(0, 136, 255, 0.7) 0%, rgba(0, 170, 255, 0.7) 100%);
+    --gradient-badge: linear-gradient(135deg, #00aaff 0%, #44aaff 100%);
+
+    --shadow-neon: 0 0 25px rgba(0, 170, 255, 0.7), 0 0 50px rgba(0, 136, 255, 0.4);
+    --shadow-accent: 0 0 30px rgba(0, 170, 255, 0.8);
+    --shadow-button: 0 0 15px rgba(170, 221, 255, 0.4);
+    --shadow-card: 0 8px 32px rgba(0, 170, 255, 0.15);
+
+    --btn-primary-bg: linear-gradient(135deg, rgba(0, 136, 255, 0.7) 0%, rgba(0, 170, 255, 0.7) 100%);
+    --btn-primary-color: var(--text-on-accent);
+    --btn-primary-border: transparent;
+    --btn-primary-shadow: 0 0 10px rgba(170, 221, 255, 0.4);
+
+    --btn-secondary-bg: var(--bg-accent);
+    --btn-secondary-color: var(--accent-light);
+    --btn-secondary-border: rgba(170, 221, 255, 0.3);
+    --btn-secondary-shadow: 0 0 8px rgba(170, 221, 255, 0.2);
+
+    --btn-auth-bg: var(--bg-accent);
+    --btn-auth-color: var(--accent-primary);
+    --btn-auth-border: rgba(0, 170, 255, 0.3);
+    --btn-auth-shadow: 0 0 8px rgba(0, 170, 255, 0.2);
+
+    --stat-value-color: #aaddff;
+    --badge-bg: var(--gradient-badge);
+    --badge-color: var(--text-on-accent);
+
+    --input-bg: var(--bg-card);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus-border: var(--accent-primary);
+    --input-focus-shadow: 0 0 0 3px rgba(0, 170, 255, 0.3);
+
+    --accent-primary-rgb: 0, 170, 255;
+    --accent-light-rgb: 170, 221, 255;
+}
+
+/* 4. ЗОЛОТА ТЕМА */
+.theme-gold {
+    --accent-primary: #ffaa00;
+    --accent-secondary: #000000;
+    --accent-light: #ffdd88;
+    --accent-dark: #cc8800;
+    --accent-neon: #ffaa44;
+
+    --bg-primary: #0f0f0a;
+    --bg-secondary: #1a1a12;
+    --bg-card: #25251a;
+    --bg-accent: #2e2e1e;
+
+    --text-primary: #f0f0e2;
+    --text-secondary: #a3a38a;
+    --text-muted: #8a8a6a;
+
+    --gradient-primary: linear-gradient(135deg, #ff8800 0%, #ffaa00 100%);
+    --gradient-secondary: linear-gradient(135deg, #ffaa00 0%, #ffaa44 100%);
+    --gradient-card: linear-gradient(145deg, #25251a 0%, #353522 100%);
+    --gradient-category: linear-gradient(135deg, #ff8800 0%, #ffaa00 100%);
+    --gradient-button: linear-gradient(135deg, rgba(255, 136, 0, 0.7) 0%, rgba(255, 170, 0, 0.7) 100%);
+    --gradient-badge: linear-gradient(135deg, #ffaa00 0%, #ffaa44 100%);
+
+    --shadow-neon: 0 0 25px rgba(255, 170, 0, 0.7), 0 0 50px rgba(255, 136, 0, 0.4);
+    --shadow-accent: 0 0 30px rgba(255, 170, 0, 0.8);
+    --shadow-button: 0 0 15px rgba(255, 221, 136, 0.4);
+    --shadow-card: 0 8px 32px rgba(255, 170, 0, 0.15);
+
+    --btn-primary-bg: linear-gradient(135deg, rgba(255, 136, 0, 0.7) 0%, rgba(255, 170, 0, 0.7) 100%);
+    --btn-primary-color: var(--text-on-accent);
+    --btn-primary-border: transparent;
+    --btn-primary-shadow: 0 0 10px rgba(255, 221, 136, 0.4);
+
+    --btn-secondary-bg: var(--bg-accent);
+    --btn-secondary-color: var(--accent-light);
+    --btn-secondary-border: rgba(255, 221, 136, 0.3);
+    --btn-secondary-shadow: 0 0 8px rgba(255, 221, 136, 0.2);
+
+    --btn-auth-bg: var(--bg-accent);
+    --btn-auth-color: var(--accent-primary);
+    --btn-auth-border: rgba(255, 170, 0, 0.3);
+    --btn-auth-shadow: 0 0 8px rgba(255, 170, 0, 0.2);
+
+    --stat-value-color: #ffdd88;
+    --badge-bg: var(--gradient-badge);
+    --badge-color: var(--text-on-accent);
+
+    --input-bg: var(--bg-card);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus-border: var(--accent-primary);
+    --input-focus-shadow: 0 0 0 3px rgba(255, 170, 0, 0.3);
+
+    --accent-primary-rgb: 255, 170, 0;
+    --accent-light-rgb: 255, 221, 136;
+}
+
+/* 5. ФІОЛЕТОВА ТЕМА */
+.theme-purple {
+    --accent-primary: #aa00ff;
+    --accent-secondary: #000000;
+    --accent-light: #dd88ff;
+    --accent-dark: #8800cc;
+    --accent-neon: #aa44ff;
+
+    --bg-primary: #0f0a0f;
+    --bg-secondary: #1a121a;
+    --bg-card: #251a25;
+    --bg-accent: #2e1e2e;
+
+    --text-primary: #f0e2f0;
+    --text-secondary: #a38aa3;
+    --text-muted: #8a6a8a;
+
+    --gradient-primary: linear-gradient(135deg, #8800ff 0%, #aa00ff 100%);
+    --gradient-secondary: linear-gradient(135deg, #aa00ff 0%, #aa44ff 100%);
+    --gradient-card: linear-gradient(145deg, #251a25 0%, #352235 100%);
+    --gradient-category: linear-gradient(135deg, #8800ff 0%, #aa00ff 100%);
+    --gradient-button: linear-gradient(135deg, rgba(136, 0, 255, 0.7) 0%, rgba(170, 0, 255, 0.7) 100%);
+    --gradient-badge: linear-gradient(135deg, #aa00ff 0%, #aa44ff 100%);
+
+    --shadow-neon: 0 0 25px rgba(170, 0, 255, 0.7), 0 0 50px rgba(136, 0, 255, 0.4);
+    --shadow-accent: 0 0 30px rgba(170, 0, 255, 0.8);
+    --shadow-button: 0 0 15px rgba(221, 136, 255, 0.4);
+    --shadow-card: 0 8px 32px rgba(170, 0, 255, 0.15);
+
+    --btn-primary-bg: linear-gradient(135deg, rgba(136, 0, 255, 0.7) 0%, rgba(170, 0, 255, 0.7) 100%);
+    --btn-primary-color: var(--text-on-accent);
+    --btn-primary-border: transparent;
+    --btn-primary-shadow: 0 0 10px rgba(221, 136, 255, 0.4);
+
+    --btn-secondary-bg: var(--bg-accent);
+    --btn-secondary-color: var(--accent-light);
+    --btn-secondary-border: rgba(221, 136, 255, 0.3);
+    --btn-secondary-shadow: 0 0 8px rgba(221, 136, 255, 0.2);
+
+    --btn-auth-bg: var(--bg-accent);
+    --btn-auth-color: var(--accent-primary);
+    --btn-auth-border: rgba(170, 0, 255, 0.3);
+    --btn-auth-shadow: 0 0 8px rgba(170, 0, 255, 0.2);
+
+    --stat-value-color: #dd88ff;
+    --badge-bg: var(--gradient-badge);
+    --badge-color: var(--text-on-accent);
+
+    --input-bg: var(--bg-card);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus-border: var(--accent-primary);
+    --input-focus-shadow: 0 0 0 3px rgba(170, 0, 255, 0.3);
+
+    --accent-primary-rgb: 170, 0, 255;
+    --accent-light-rgb: 221, 136, 255;
+}
+
+/* Стилі для перемикача тем (для header.css) */
+.theme-switcher {
+    position: relative;
+}
+
+.theme-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 180px;
+    z-index: 1000;
+    display: none;
+    animation: fadeIn 0.2s ease;
+}
+
+.theme-dropdown.show {
+    display: block;
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.theme-option:last-child {
+    border-bottom: none;
+}
+
+.theme-option:hover {
+    background: var(--bg-accent);
+}
+
+.theme-option.active {
+    background: var(--bg-accent);
+    position: relative;
+}
+
+.theme-option.active::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    width: 6px;
+    height: 6px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-primary);
+}
+
+.theme-color-preview {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-green .theme-color-preview[data-theme="green"] {
+    background: #44ff00;
+    box-shadow: 0 0 8px #44ff00;
+}
+
+.theme-pink .theme-color-preview[data-theme="pink"] {
+    background: #ff00aa;
+    box-shadow: 0 0 8px #ff00aa;
+}
+
+.theme-blue .theme-color-preview[data-theme="blue"] {
+    background: #00aaff;
+    box-shadow: 0 0 8px #00aaff;
+}
+
+.theme-gold .theme-color-preview[data-theme="gold"] {
+    background: #ffaa00;
+    box-shadow: 0 0 8px #ffaa00;
+}
+
+.theme-purple .theme-color-preview[data-theme="purple"] {
+    background: #aa00ff;
+    box-shadow: 0 0 8px #aa00ff;
+}
+
+/* Інші теми для попереднього перегляду */
+.theme-color-preview[data-theme="green"] {
+    background: #44ff00;
+}
+
+.theme-color-preview[data-theme="pink"] {
+    background: #ff00aa;
+}
+
+.theme-color-preview[data-theme="blue"] {
+    background: #00aaff;
+}
+
+.theme-color-preview[data-theme="gold"] {
+    background: #ffaa00;
+}
+
+.theme-color-preview[data-theme="purple"] {
+    background: #aa00ff;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Стилі для активної навігації з новими темами */
+.nav-link.active {
+    color: var(--accent-primary);
+    background: rgba(var(--accent-primary-rgb), 0.12);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 1rem;
+    right: 1rem;
+    height: 2px;
+    background: var(--gradient-primary);
+    border-radius: 1px;
+    box-shadow: 0 0 5px var(--accent-primary);
+}

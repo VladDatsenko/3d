@@ -1,4 +1,4 @@
-/* Модальне вікно */
+/* Модальне вікно - ПОВНІСТЮ ОНОВЛЕНО ДЛЯ ПОВНОЇ ПІДТРИМКИ ТЕМ */
 .modal {
     display: none;
     position: fixed;
@@ -134,32 +134,33 @@
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* КНОПКА "ЗАВАНТАЖИТИ МОДЕЛЬ" - МЕНШ КИСЛОТНА */
+/* КНОПКА "ЗАВАНТАЖИТИ МОДЕЛЬ" */
 .modal-actions .btn-primary {
-    background: linear-gradient(135deg, rgba(0, 255, 68, 0.7) 0%, rgba(68, 255, 0, 0.7) 100%);
-    color: var(--text-on-green);
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-color);
     flex: 2;
-    border: 1px solid transparent;
-    text-shadow: var(--text-shadow-green);
-    box-shadow: 0 0 10px rgba(170, 255, 170, 0.4);
+    border: 1px solid var(--btn-primary-border);
+    text-shadow: var(--text-shadow-accent);
+    box-shadow: var(--btn-primary-shadow);
 }
 
 .modal-actions .btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 0 15px rgba(170, 255, 170, 0.6);
+    box-shadow: var(--shadow-button);
 }
 
-/* КНОПКА "ДОДАТИ/ВИДАЛИТИ З ОБРАНОГО" - ТАКА Ж ЯК РАНІШЕ */
+/* КНОПКА "ДОДАТИ/ВИДАЛИТИ З ОБРАНОГО" */
 .toggle-favorite {
-    background: var(--bg-accent);
-    color: var(--accent-primary);
-    border: 1px solid rgba(68, 255, 0, 0.4);
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-color);
+    border: 1px solid var(--btn-secondary-border);
+    box-shadow: var(--btn-secondary-shadow);
 }
 
 .toggle-favorite:hover {
-    background: rgba(68, 255, 0, 0.1);
+    background: rgba(var(--accent-primary-rgb), 0.1);
     border-color: var(--accent-primary);
-    box-shadow: 0 0 10px rgba(68, 255, 0, 0.3);
+    box-shadow: var(--shadow-button);
 }
 
 /* СЕКЦІЯ "ПОДІЛИТИСЯ" */
@@ -179,7 +180,7 @@
     flex: 1;
     padding: 0.75rem;
     background: var(--bg-accent);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--input-border);
     border-radius: var(--radius-md);
     color: var(--text-primary);
     font-size: 0.9rem;
@@ -190,31 +191,32 @@
 .share-url-input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 2px rgba(68, 255, 0, 0.2);
+    box-shadow: var(--input-focus-shadow);
 }
 
 .copy-share-btn {
     padding: 0.75rem 1.25rem;
     white-space: nowrap;
     transition: var(--transition);
-    background: var(--bg-accent);
-    color: var(--accent-primary);
-    border: 1px solid rgba(68, 255, 0, 0.4);
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-color);
+    border: 1px solid var(--btn-secondary-border);
     border-radius: var(--radius-md);
     cursor: pointer;
     font-weight: 600;
+    box-shadow: var(--btn-secondary-shadow);
 }
 
 .copy-share-btn:hover {
-    background: rgba(68, 255, 0, 0.1);
+    background: rgba(var(--accent-primary-rgb), 0.1);
     border-color: var(--accent-primary);
     transform: translateY(-1px);
-    box-shadow: 0 0 10px rgba(68, 255, 0, 0.3);
+    box-shadow: var(--shadow-button);
 }
 
 .copy-share-btn.copied {
     background: var(--accent-primary);
-    color: var(--text-on-green);
+    color: var(--text-on-accent);
 }
 
 /* Адаптивність для секції поділу */

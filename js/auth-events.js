@@ -12,7 +12,7 @@ const AuthEvents = {
     // Змінна для відстеження моделі, яку редагуємо
     editingModelId: null,
     
-    // Ініціалізація обробників адмін-панелі
+    // Ініціалізація системи
     init() {
         console.log('Ініціалізація обробників адмін-панелі...');
         
@@ -387,7 +387,7 @@ const AuthEvents = {
             adminBtn.classList.add('logged-in');
         } else {
             adminBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
-            adminBtn.title = 'Вхід до адмін-панелі';
+            adminBtn.title = 'Вхід до адмін  панелі';
             adminBtn.classList.remove('logged-in');
         }
     },
@@ -582,7 +582,7 @@ const AuthEvents = {
         }
     },
 
-    // Показати помилку входу
+    // Показати помилку входу (в формі, не глобально)
     showLoginError(message) {
         const loginError = document.getElementById('login-error');
         if (loginError) {
@@ -706,7 +706,7 @@ const AuthEvents = {
         }
     },
 
-    // Показати помилку скидання пароля
+    // Показати помилку скидання пароля (в формі, не глобально)
     showResetError(message) {
         const resetError = document.getElementById('reset-error');
         if (resetError) {
@@ -898,7 +898,7 @@ const AuthEvents = {
         });
     },
 
-    // Показати помилку в формі додавання моделі
+    // Показати помилку в формі додавання моделі (в формі, не глобально)
     showAddModelError(message) {
         const errorElement = document.getElementById('add-model-error');
         if (errorElement) {
@@ -1049,7 +1049,7 @@ const AuthEvents = {
         }
     },
 
-    // Показати помилку в формі зміни пароля
+    // Показати помилку в формі зміни пароля (в формі, не глобально)
     showChangePasswordError(message) {
         const errorElement = document.getElementById('change-password-error');
         if (errorElement) {

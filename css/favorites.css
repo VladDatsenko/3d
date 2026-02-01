@@ -1,4 +1,4 @@
-/* Розділ обраного */
+/* Розділ обраного - ОНОВЛЕНО ДЛЯ ПОВНОЇ ПІДТРИМКИ ТЕМ */
 .favorites-section {
     padding: 2rem 0;
 }
@@ -23,6 +23,7 @@
 .favorites-empty h3 {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
+    color: var(--text-primary);
 }
 
 .favorites-empty p {
