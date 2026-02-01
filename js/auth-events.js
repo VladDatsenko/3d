@@ -206,7 +206,6 @@ const AuthEvents = {
         this.resetAddModelForm();
     },
 
-    // Наступний код залишається без змін (з попередньої версії)
     // Налаштування обробників для модального вікна керування категоріями
     setupCategoriesModalEvents() {
         console.log('Налаштування обробників для модального вікна категорій...');
@@ -370,7 +369,6 @@ const AuthEvents = {
         }
     },
 
-    // Решта коду залишається без змін (з попередньої версії)
     // Налаштування кнопки адміна (тепер вхід/вихід)
     setupAdminButton() {
         this.updateAdminButton();
@@ -425,6 +423,7 @@ const AuthEvents = {
             this.updateLoginAttemptsInfo();
             
             authModal.classList.add('show');
+            document.body.classList.add('modal-open');
             
             // Фокус на поле пароля
             setTimeout(() => {
@@ -440,6 +439,7 @@ const AuthEvents = {
         const authModal = document.getElementById('auth-modal');
         if (authModal) {
             authModal.classList.remove('show');
+            document.body.classList.remove('modal-open');
             
             // Скинути всі поля форми
             this.resetAuthForms();
@@ -570,7 +570,6 @@ const AuthEvents = {
         
         if (result.success) {
             this.closeAuthModal();
-            this.showAdminPanel();
             this.updateAdminButton();
         } else {
             this.updateLoginAttemptsInfo();
@@ -727,48 +726,33 @@ const AuthEvents = {
         this.updateAdminButton();
         this.updateLoginAttemptsInfo();
         
-        const adminSection = document.getElementById('admin-section');
-        if (adminSection) {
-            if (isAuthenticated) {
-                adminSection.classList.remove('hidden');
-                const modelsSection = document.querySelector('.models-section');
-                if (modelsSection) {
-                    modelsSection.classList.add('hidden');
-                }
-                const favoritesSection = document.querySelector('.favorites-section');
-                if (favoritesSection) {
-                    favoritesSection.classList.add('hidden');
-                }
-                
-                this.updateNavigation('admin');
-                
-                const adminWelcome = document.getElementById('admin-welcome');
-                if (adminWelcome) {
-                    const authState = AuthSystem.getAuthState();
-                    const lastActivity = authState.lastActivity ? 
-                        new Date(authState.lastActivity).toLocaleString('uk-UA') : 
-                        'тільки що';
-                    adminWelcome.innerHTML = `
-                        <h3>Ласкаво просимо до адмін-панелі!</h3>
-                        <p>Остання активність: ${lastActivity}</p>
-                    `;
-                }
-                
-                this.updateAdminStats();
-                this.populateModelCategories();
-            } else {
-                adminSection.classList.add('hidden');
-                const modelsSection = document.querySelector('.models-section');
-                if (modelsSection) {
-                    modelsSection.classList.remove('hidden');
-                }
-                
-                this.updateNavigation('main');
-                
-                // Перерендерити моделі, щоб приховати кнопки адміна
-                UIManager.renderModels();
-                UIManager.renderFavorites();
+        if (isAuthenticated) {
+            StateManager.setCurrentSection('admin');
+            UIManager.toggleSections('admin');
+            this.updateNavigation('main');
+            
+            const adminWelcome = document.getElementById('admin-welcome');
+            if (adminWelcome) {
+                const authState = AuthSystem.getAuthState();
+                const lastActivity = authState.lastActivity ? 
+                    new Date(authState.lastActivity).toLocaleString('uk-UA') : 
+                    'тільки що';
+                adminWelcome.innerHTML = `
+                    <h3>Ласкаво просимо до адмін-панелі!</h3>
+                    <p>Остання активність: ${lastActivity}</p>
+                `;
             }
+            
+            this.updateAdminStats();
+            this.populateModelCategories();
+        } else {
+            StateManager.setCurrentSection('main');
+            UIManager.toggleSections('main');
+            this.updateNavigation('main');
+            
+            // Перерендерити моделі, щоб приховати кнопки адміна
+            UIManager.renderModels();
+            UIManager.renderFavorites();
         }
     },
 
@@ -847,6 +831,7 @@ const AuthEvents = {
             this.populateModelCategories();
             
             modal.classList.add('show');
+            document.body.classList.add('modal-open');
             
             setTimeout(() => {
                 const titleInput = document.getElementById('model-title');
@@ -862,6 +847,7 @@ const AuthEvents = {
         const modal = document.getElementById('add-model-modal');
         if (modal) {
             modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
     },
 
@@ -972,6 +958,7 @@ const AuthEvents = {
         if (modal) {
             this.resetChangePasswordForm();
             modal.classList.add('show');
+            document.body.classList.add('modal-open');
             
             setTimeout(() => {
                 const currentPasswordInput = document.getElementById('current-password');
@@ -987,6 +974,7 @@ const AuthEvents = {
         const modal = document.getElementById('change-password-modal');
         if (modal) {
             modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
     },
 

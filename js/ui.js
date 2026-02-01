@@ -115,16 +115,37 @@ const UIManager = {
 
     // Показати/приховати секції
     toggleSections(section) {
-        const isMainSection = section === 'main';
-        
+        // Приховуємо всі секції
         if (DomElements.modelsSection) {
-            DomElements.modelsSection.classList.toggle('hidden', !isMainSection);
+            DomElements.modelsSection.classList.add('hidden');
         }
-        
         if (DomElements.favoritesSection) {
-            DomElements.favoritesSection.classList.toggle('hidden', isMainSection);
+            DomElements.favoritesSection.classList.add('hidden');
+        }
+        if (DomElements.adminSection) {
+            DomElements.adminSection.classList.add('hidden');
+        }
+
+        // Показуємо потрібну
+        switch(section) {
+            case 'main':
+                if (DomElements.modelsSection) {
+                    DomElements.modelsSection.classList.remove('hidden');
+                }
+                break;
+            case 'favorites':
+                if (DomElements.favoritesSection) {
+                    DomElements.favoritesSection.classList.remove('hidden');
+                }
+                break;
+            case 'admin':
+                if (DomElements.adminSection) {
+                    DomElements.adminSection.classList.remove('hidden');
+                }
+                break;
         }
         
+        // Оновити відображення в залежності від секції
         if (section === 'favorites') {
             this.renderFavorites();
         }

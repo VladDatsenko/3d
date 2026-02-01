@@ -55,6 +55,7 @@ const DomElements = {
     favCount: getElement('.fav-count'),
     modelsSection: getElement('.models-section'),
     favoritesSection: getElement('.favorites-section'),
+    adminSection: getElement('#admin-section'),
     
     // ===== ЕЛЕМЕНТИ ДЛЯ АВТЕНТИФІКАЦІЇ =====
     
@@ -86,7 +87,6 @@ const DomElements = {
     loginAttemptsInfo: getElement('#login-attempts-info'),
     
     // Секція адмін-панелі
-    adminSection: getElement('#admin-section'),
     adminWelcome: getElement('#admin-welcome'),
     
     // Метод для перевірки завантаження критичних елементів

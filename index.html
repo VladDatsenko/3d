@@ -175,45 +175,7 @@
     <!-- Main Content -->
     <main class="main-content">
       <div class="container">
-        <!-- Models Grid -->
-        <section id="models" class="models-section">
-          <div class="section-header">
-            <h2 class="section-title">Всі моделі</h2>
-            <div class="filter-controls">
-              <button class="filter-btn active" data-filter="all">Всі</button>
-              <button class="filter-btn" data-filter="featured">
-                Популярні
-              </button>
-              <button class="filter-btn" data-filter="new">Новинки</button>
-            </div>
-          </div>
-          <div class="models-grid" id="models-container">
-            <!-- Models will be loaded by JS -->
-          </div>
-          <div class="load-more">
-            <button id="load-more-btn" class="btn btn-secondary">
-              <i class="fas fa-plus"></i> Завантажити ще
-            </button>
-          </div>
-        </section>
-
-        <!-- Favorites Section -->
-        <section id="favorites" class="favorites-section hidden">
-          <div class="section-header">
-            <h2 class="section-title">Обрані моделі</h2>
-            <button id="clear-favorites" class="btn-text">Очистити все</button>
-          </div>
-          <div class="favorites-empty" id="favorites-empty">
-            <i class="far fa-heart"></i>
-            <h3>Тут поки порожньо</h3>
-            <p>Додавайте моделі до обраних, натискаючи на сердечко</p>
-          </div>
-          <div class="favorites-grid" id="favorites-container">
-            <!-- Favorite models will appear here -->
-          </div>
-        </section>
-
-        <!-- ===== НОВА СЕКЦІЯ: АДМІН-ПАНЕЛЬ ===== -->
+        <!-- ===== АДМІН-ПАНЕЛЬ (ПОСЛІДОВНІСТЬ ЗМІНЕНА) ===== -->
         <section id="admin-section" class="admin-section hidden">
           <div class="section-header">
             <h2 class="section-title">Адмін-панель</h2>
@@ -290,6 +252,44 @@
                 </button>
               </div>
             </div>
+          </div>
+        </section>
+
+        <!-- Models Grid -->
+        <section id="models" class="models-section">
+          <div class="section-header">
+            <h2 class="section-title">Всі моделі</h2>
+            <div class="filter-controls">
+              <button class="filter-btn active" data-filter="all">Всі</button>
+              <button class="filter-btn" data-filter="featured">
+                Популярні
+              </button>
+              <button class="filter-btn" data-filter="new">Новинки</button>
+            </div>
+          </div>
+          <div class="models-grid" id="models-container">
+            <!-- Models will be loaded by JS -->
+          </div>
+          <div class="load-more">
+            <button id="load-more-btn" class="btn btn-secondary">
+              <i class="fas fa-plus"></i> Завантажити ще
+            </button>
+          </div>
+        </section>
+
+        <!-- Favorites Section -->
+        <section id="favorites" class="favorites-section hidden">
+          <div class="section-header">
+            <h2 class="section-title">Обрані моделі</h2>
+            <button id="clear-favorites" class="btn-text">Очистити все</button>
+          </div>
+          <div class="favorites-empty" id="favorites-empty">
+            <i class="far fa-heart"></i>
+            <h3>Тут поки порожньо</h3>
+            <p>Додавайте моделі до обраних, натискаючи на сердечко</p>
+          </div>
+          <div class="favorites-grid" id="favorites-container">
+            <!-- Favorite models will appear here -->
           </div>
         </section>
       </div>

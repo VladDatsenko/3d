@@ -443,6 +443,7 @@ const EventHandlers = {
         
         // Показати модальне вікно
         modal.classList.add('show');
+        document.body.classList.add('modal-open');
         
         // Фокус на першому полі
         setTimeout(() => {
@@ -509,7 +510,18 @@ const EventHandlers = {
         if (DomElements.mainLink) {
             DomElements.mainLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                UIManager.resetToMainPage();
+                const state = StateManager.getState();
+                
+                // Якщо адмін авторизований - показуємо адмін-панель
+                if (AuthSystem.isAuthenticated()) {
+                    StateManager.setCurrentSection('admin');
+                    UIManager.toggleSections('admin');
+                    UIManager.updateNavigation('main');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    // Якщо не авторизований - показуємо моделі
+                    UIManager.resetToMainPage();
+                }
             });
         }
         
@@ -518,16 +530,26 @@ const EventHandlers = {
             DomElements.modelsLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 const state = StateManager.getState();
-                if (state.currentSection === 'favorites') {
+                
+                // Якщо адмін авторизований - показуємо моделі
+                if (AuthSystem.isAuthenticated()) {
                     StateManager.setCurrentSection('main');
                     UIManager.toggleSections('main');
                     UIManager.updateNavigation('models');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    const modelsSection = document.getElementById('models');
-                    if (modelsSection) {
-                        modelsSection.scrollIntoView({ behavior: 'smooth' });
+                    // Стандартна поведінка для не авторизованих
+                    if (state.currentSection === 'favorites') {
+                        StateManager.setCurrentSection('main');
+                        UIManager.toggleSections('main');
+                        UIManager.updateNavigation('models');
+                    } else {
+                        const modelsSection = document.getElementById('models');
+                        if (modelsSection) {
+                            modelsSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                        UIManager.updateNavigation('models');
                     }
-                    UIManager.updateNavigation('models');
                 }
             });
         }
@@ -541,6 +563,7 @@ const EventHandlers = {
                 UIManager.toggleSections('favorites');
                 UIManager.updateNavigation('favorites');
                 UIManager.updateFavoritesCounter();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         }
         
