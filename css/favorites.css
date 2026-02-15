@@ -1,9 +1,11 @@
 /* Розділ обраного - ОНОВЛЕНО ДЛЯ ПОВНОЇ ПІДТРИМКИ ТЕМ */
-.favorites-section {
+.favorites-section,
+.cart-section {
     padding: 2rem 0;
 }
 
-.favorites-empty {
+.favorites-empty,
+.cart-empty {
     text-align: center;
     padding: 4rem 2rem;
     background: var(--bg-card);
@@ -11,7 +13,8 @@
     border: 2px dashed rgba(255, 255, 255, 0.1);
 }
 
-.favorites-empty i {
+.favorites-empty i,
+.cart-empty i {
     font-size: 4rem;
     background: var(--gradient-primary);
     -webkit-background-clip: text;
@@ -20,18 +23,21 @@
     margin-bottom: 1.5rem;
 }
 
-.favorites-empty h3 {
+.favorites-empty h3,
+.cart-empty h3 {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
     color: var(--text-primary);
 }
 
-.favorites-empty p {
+.favorites-empty p,
+.cart-empty p {
     color: var(--text-secondary);
     font-size: 1rem;
 }
 
-.favorites-grid {
+.favorites-grid,
+.cart-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
@@ -50,4 +56,27 @@
 
 .btn-text:hover {
     color: #ff2a6d;
+}
+
+/* Стилі для футера кошика */
+.cart-footer {
+    margin-top: 2rem;
+    text-align: right;
+}
+
+.cart-footer .btn-primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-color);
+    border: 1px solid var(--btn-primary-border);
+    box-shadow: var(--btn-primary-shadow);
+    padding: 0.75rem 2rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cart-footer .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-button);
 }

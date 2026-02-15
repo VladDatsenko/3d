@@ -20,7 +20,9 @@ const DomElements = {
     // Основні контейнери
     modelsContainer: getElement('#models-container'),
     favoritesContainer: getElement('#favorites-container'),
+    cartContainer: getElement('#cart-container'),        // новий
     favoritesEmpty: getElement('#favorites-empty'),
+    cartEmpty: getElement('#cart-empty'),                // новий
     categoriesScrollbar: getElement('#categories-scrollbar'),
     categoriesListContainer: getElement('#categories-list-container'),
     
@@ -33,6 +35,7 @@ const DomElements = {
     mainLink: getElement('.nav-link[data-section="main"]'),
     modelsLink: getElement('.nav-link[data-section="models"]'),
     favoritesLink: getElement('.favorites-link'),
+    cartLink: getElement('.cart-link'),                  // новий
     navLinks: getElement('.nav-link', true),
     
     // Управління категоріями
@@ -45,35 +48,36 @@ const DomElements = {
     modelModal: getElement('#model-modal'),
     modalBody: getElement('#modal-body'),
     categoriesModal: getElement('#categories-modal'),
+    orderFormModal: getElement('#order-form-modal'),     // нове модальне вікно для форми замовлення
+    ordersModal: getElement('#orders-modal'),            // нове модальне вікно для перегляду замовлень (адмін)
     
     // Кнопки
     scrollLeftBtn: getElement('.scroll-left'),
     scrollRightBtn: getElement('.scroll-right'),
     clearFavoritesBtn: getElement('#clear-favorites'),
+    clearCartBtn: getElement('#clear-cart'),             // новий
+    checkoutBtn: getElement('#checkout-btn'),            // новий (оформити замовлення)
     
     // Інші
     favCount: getElement('.fav-count'),
+    cartCount: getElement('.cart-count'),                // новий
     modelsSection: getElement('.models-section'),
     favoritesSection: getElement('.favorites-section'),
+    cartSection: getElement('.cart-section'),            // новий
     adminSection: getElement('#admin-section'),
     
     // ===== ЕЛЕМЕНТИ ДЛЯ АВТЕНТИФІКАЦІЇ =====
     
-    // Кнопка адміна в навбарі (тепер для входу/виходу)
     adminPanelBtn: getElement('.admin-panel-btn'),
-    
-    // Модальне вікно авторизації
     authModal: getElement('#auth-modal'),
     authModalBody: getElement('#auth-modal-body'),
     authModalClose: getElement('#auth-modal-close'),
     
-    // Форма входу
     loginForm: getElement('#login-form'),
     loginPasswordInput: getElement('#login-password'),
     loginSubmitBtn: getElement('#login-submit-btn'),
     loginError: getElement('#login-error'),
     
-    // Форма скидання пароля
     resetPasswordForm: getElement('#reset-password-form'),
     resetSecurityAnswer: getElement('#reset-security-answer'),
     resetNewPassword: getElement('#reset-new-password'),
@@ -83,10 +87,8 @@ const DomElements = {
     showResetFormBtn: getElement('#show-reset-form-btn'),
     backToLoginBtn: getElement('#back-to-login-btn'),
     
-    // Інформація про спроби входу
     loginAttemptsInfo: getElement('#login-attempts-info'),
     
-    // Секція адмін-панелі
     adminWelcome: getElement('#admin-welcome'),
     
     // Метод для перевірки завантаження критичних елементів

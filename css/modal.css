@@ -80,6 +80,7 @@
 .modal-title {
     font-size: 1.75rem;
     margin-bottom: 0.5rem;
+    color: var(--text-primary);
 }
 
 .modal-author {
@@ -219,6 +220,182 @@
     color: var(--text-on-accent);
 }
 
+/* ===== СТИЛІ ДЛЯ МОДАЛЬНОГО ВІКНА ЗАМОВЛЕННЯ ===== */
+#order-form-modal .modal-content {
+    max-width: 500px;
+}
+
+#order-form-modal .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#order-form-modal .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+#order-form-modal .form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+#order-form-modal .form-input {
+    padding: 0.875rem 1.25rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+    width: 100%;
+}
+
+#order-form-modal .form-input:focus {
+    border-color: var(--input-focus-border);
+    outline: none;
+    box-shadow: var(--input-focus-shadow);
+}
+
+#order-form-modal textarea.form-input {
+    min-height: 80px;
+    resize: vertical;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+#order-form-modal .error-message,
+#order-form-modal .success-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+#order-form-modal .error-message {
+    background: rgba(255, 42, 109, 0.15);
+    color: var(--accent-danger);
+    border: 1px solid rgba(255, 42, 109, 0.4);
+}
+
+#order-form-modal .success-message {
+    background: rgba(var(--accent-primary-rgb), 0.15);
+    color: var(--accent-primary);
+    border: 1px solid rgba(var(--accent-primary-rgb), 0.4);
+}
+
+#order-form-modal .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+#order-form-modal .btn-primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-color);
+    border: 1px solid var(--btn-primary-border);
+    box-shadow: var(--btn-primary-shadow);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#order-form-modal .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-button);
+}
+
+#order-form-modal .btn-secondary {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-color);
+    border: 1px solid var(--btn-secondary-border);
+    box-shadow: var(--btn-secondary-shadow);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#order-form-modal .btn-secondary:hover {
+    background: rgba(var(--accent-primary-rgb), 0.1);
+    border-color: var(--accent-primary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-button);
+}
+
+/* ===== СТИЛІ ДЛЯ МОДАЛЬНОГО ВІКНА СПИСКУ ЗАМОВЛЕНЬ (АДМІН) ===== */
+#orders-modal .modal-content {
+    max-width: 600px;
+}
+
+#orders-modal .orders-list {
+    margin: 1rem 0;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+#orders-modal .order-item {
+    background: var(--bg-accent);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: var(--transition);
+}
+
+#orders-modal .order-item:hover {
+    border-color: var(--accent-primary);
+}
+
+#orders-modal .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+#orders-modal .order-id {
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+#orders-modal .order-date {
+    font-size: 0.85rem;
+}
+
+#orders-modal .order-customer {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+#orders-modal .order-items {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+#orders-modal .order-items span {
+    color: var(--accent-light);
+    font-weight: 600;
+}
+
+#orders-modal .order-empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
 /* Адаптивність для секції поділу */
 @media (max-width: 768px) {
     .modal-share>div {
@@ -231,6 +408,15 @@
     }
 
     .copy-share-btn {
+        width: 100%;
+    }
+
+    #order-form-modal .form-actions {
+        flex-direction: column;
+    }
+
+    #order-form-modal .btn-primary,
+    #order-form-modal .btn-secondary {
         width: 100%;
     }
 }

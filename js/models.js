@@ -10,15 +10,11 @@ const ModelsManager = {
         const state = StateManager.getState();
         const query = searchQuery.toLowerCase().trim();
         
+        // Якщо запит коротший за 2 символи – ігноруємо його (повертаємо всі моделі)
+        const hasValidQuery = query.length >= 2;
+        
         state.filteredModels = state.models.filter(model => {
-            // Пошук
-            const matchesSearch = !query || 
-                model.title.toLowerCase().includes(query) ||
-                model.author.toLowerCase().includes(query) ||
-                model.description.toLowerCase().includes(query) ||
-                model.tags.some(tag => tag.toLowerCase().includes(query));
-            
-            // Категорія
+            // Фільтр за категорією
             let matchesCategory = true;
             if (state.currentCategory !== 'all') {
                 const tags = categoryTags[state.currentCategory] || [];
@@ -27,12 +23,40 @@ const ModelsManager = {
                 );
             }
             
-            // Тип фільтру
+            // Фільтр за типом (featured/new)
             const matchesFilter = state.currentFilter === 'all' || 
                 (state.currentFilter === 'featured' && model.featured) ||
                 (state.currentFilter === 'new' && model.isNew);
             
-            return matchesSearch && matchesCategory && matchesFilter;
+            // Якщо немає пошукового запиту – тільки категорія та фільтр
+            if (!hasValidQuery) {
+                return matchesCategory && matchesFilter;
+            }
+            
+            // --- Пошук з вагами ---
+            let score = 0;
+            
+            // 1. Назва (title): +10, якщо будь-яке слово починається з запиту
+            const titleWords = model.title.toLowerCase().split(/\s+/);
+            if (titleWords.some(word => word.startsWith(query))) {
+                score += 10;
+            }
+            
+            // 2. Теги (tags): +5 за кожен тег, що починається з запиту
+            const tagMatches = model.tags.filter(tag => 
+                tag.toLowerCase().startsWith(query)
+            ).length;
+            score += tagMatches * 5;
+            
+            // 3. Опис (description): +1, якщо запит є підрядком
+            if (model.description.toLowerCase().includes(query)) {
+                score += 1;
+            }
+            
+            // Поріг: показуємо тільки якщо балів >= 3
+            const matchesSearch = score >= 3;
+            
+            return matchesCategory && matchesFilter && matchesSearch;
         });
         
         StateManager.resetDisplayedCount();
@@ -72,12 +96,44 @@ const ModelsManager = {
     },
 
     // Створити HTML для моделі
-    createModelHTML(model) {
+    // Параметр inCart = true означає, що модель відображається в кошику
+    createModelHTML(model, inCart = false) {
         const state = StateManager.getState();
         const isNew = model.isNew ? '<span class="model-badge">NEW</span>' : '';
         const isFeatured = model.featured ? '<span class="model-badge">POPULAR</span>' : '';
         const isFavorite = state.favorites.includes(model.id) ? 'active' : '';
         const isAdmin = AuthSystem.isAuthenticated();
+        
+        // Визначаємо другу кнопку залежно від ролі та контексту
+        let actionButton = '';
+        if (isAdmin) {
+            // Для адміна завжди кнопка STL (навіть у кошику)
+            actionButton = `
+                <button class="btn btn-secondary download-btn" data-id="${model.id}">
+                    <i class="fas fa-download"></i> STL
+                </button>
+            `;
+        } else {
+            if (inCart) {
+                // У кошику для звичайного користувача — кнопка видалення
+                actionButton = `
+                    <button class="btn btn-secondary remove-from-cart-btn" data-id="${model.id}">
+                        <i class="fas fa-trash"></i> Видалити з кошика
+                    </button>
+                `;
+            } else {
+                // Поза кошиком — кнопка замовлення
+                actionButton = `
+                    <button class="btn btn-secondary order-btn" data-id="${model.id}">
+                        <i class="fas fa-shopping-cart"></i> Замовити
+                    </button>
+                `;
+            }
+        }
+        
+        // Обмежуємо кількість тегів до 2, щоб вони завжди були в один рядок
+        const visibleTags = model.tags.slice(0, 2);
+        const remainingCount = model.tags.length - 2;
         
         return `
         <div class="model-card" data-id="${model.id}">
@@ -111,25 +167,23 @@ const ModelsManager = {
                     </div>
                 </div>
                 <div class="model-tags">
-                    ${model.tags.slice(0, 3).map(tag => `<span class="model-tag">${tag}</span>`).join('')}
-                    ${model.tags.length > 3 ? '<span class="model-tag">+' + (model.tags.length - 3) + '</span>' : ''}
+                    ${visibleTags.map(tag => `<span class="model-tag">${tag}</span>`).join('')}
+                    ${remainingCount > 0 ? `<span class="model-tag">+${remainingCount}</span>` : ''}
                 </div>
                 <div class="model-actions">
                     <button class="btn btn-primary view-details" data-id="${model.id}">
                         <i class="fas fa-eye"></i> Детальніше
                     </button>
-                    <button class="btn btn-secondary download-btn" data-id="${model.id}">
-                        <i class="fas fa-download"></i> STL
-                    </button>
+                    ${actionButton}
                 </div>
                 
                 ${isAdmin ? `
-                <div class="model-admin-actions" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                        <button class="btn btn-warning edit-model-btn" data-id="${model.id}" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
+                <div class="model-admin-actions">
+                    <div>
+                        <button class="btn btn-warning edit-model-btn" data-id="${model.id}">
                             <i class="fas fa-edit"></i> Редагувати
                         </button>
-                        <button class="btn btn-danger delete-model-btn" data-id="${model.id}" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
+                        <button class="btn btn-danger delete-model-btn" data-id="${model.id}">
                             <i class="fas fa-trash"></i> Видалити
                         </button>
                     </div>
@@ -145,6 +199,22 @@ const ModelsManager = {
         const state = StateManager.getState();
         const isFavorite = state.favorites.includes(model.id);
         const isAdmin = AuthSystem.isAuthenticated();
+        
+        // Визначаємо основну кнопку дії
+        let actionButton = '';
+        if (isAdmin) {
+            actionButton = `
+                <button class="btn btn-primary download-btn" data-id="${model.id}" style="flex: 2;">
+                    <i class="fas fa-download"></i> Завантажити модель
+                </button>
+            `;
+        } else {
+            actionButton = `
+                <button class="btn btn-primary order-btn" data-id="${model.id}" style="flex: 2;">
+                    <i class="fas fa-shopping-cart"></i> Замовити
+                </button>
+            `;
+        }
         
         // Генеруємо посилання для поділу
         const shareUrl = `${window.location.origin}${window.location.pathname}#model-${model.id}`;
@@ -207,9 +277,7 @@ const ModelsManager = {
         </div>
         
         <div class="modal-actions">
-            <button class="btn btn-primary download-btn" data-id="${model.id}" style="flex: 2;">
-                <i class="fas fa-download"></i> Завантажити модель
-            </button>
+            ${actionButton}
             <button class="btn btn-secondary toggle-favorite" data-id="${model.id}">
                 <i class="fas fa-heart"></i> 
                 ${isFavorite ? 'Видалити з обраного' : 'Додати в обране'}
@@ -252,6 +320,14 @@ const ModelsManager = {
             
             // Видалити з обраного
             StateManager.removeFromFavorites(modelId);
+            
+            // Видалити з кошика
+            const cartIndex = state.cart.indexOf(modelId);
+            if (cartIndex !== -1) {
+                state.cart.splice(cartIndex, 1);
+                // Зберегти кошик (через CartManager)
+                import('./cart.js').then(module => module.CartManager.saveCartToStorage());
+            }
             
             // Зберегти зміни
             this.saveModelsToStorage();

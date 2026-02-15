@@ -135,6 +135,10 @@
               <i class="far fa-heart"></i>
               <span class="fav-count">0</span>
             </a>
+            <a href="#cart" class="nav-link cart-link" data-section="cart">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count">0</span>
+            </a>
           </div>
 
           <div class="search-container">
@@ -206,64 +210,18 @@
     <!-- Main Content -->
     <main class="main-content">
       <div class="container">
-        <!-- ===== АДМІН-ПАНЕЛЬ (ПОСЛІДОВНІСТЬ ЗМІНЕНА) ===== -->
+        <!-- ===== АДМІН-ПАНЕЛЬ ===== -->
         <section id="admin-section" class="admin-section hidden">
           <div class="section-header">
             <h2 class="section-title">Адмін-панель</h2>
-            <!-- Кнопка виходу видалена - тепер одна кнопка в навбарі -->
           </div>
 
-          <div class="admin-welcome" id="admin-welcome">
-            <p>
-              Ласкаво просимо до адмін-панелі! Тут ви можете керувати контентом.
-            </p>
-          </div>
+          <!-- Видалено admin-welcome -->
 
           <div class="admin-content">
-            <div class="admin-stats">
-              <h3>Статистика системи</h3>
-              <div class="stats-grid">
-                <div class="stat-card">
-                  <div class="stat-icon">
-                    <i class="fas fa-cube"></i>
-                  </div>
-                  <div class="stat-info">
-                    <span class="stat-value" id="stat-models-count">0</span>
-                    <span class="stat-label">Моделей в базі</span>
-                  </div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-icon">
-                    <i class="fas fa-heart"></i>
-                  </div>
-                  <div class="stat-info">
-                    <span class="stat-value" id="stat-favorites-count">0</span>
-                    <span class="stat-label">В обраному</span>
-                  </div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-icon">
-                    <i class="fas fa-layer-group"></i>
-                  </div>
-                  <div class="stat-info">
-                    <span class="stat-value" id="stat-categories-count">0</span>
-                    <span class="stat-label">Категорій</span>
-                  </div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-icon">
-                    <i class="fas fa-download"></i>
-                  </div>
-                  <div class="stat-info">
-                    <span class="stat-value" id="stat-total-downloads">0</span>
-                    <span class="stat-label">Завантажень</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            <!-- Видалено заголовок "Швидкі дії" -->
             <div class="admin-actions">
-              <h3>Швидкі дії</h3>
+              <!-- Самі кнопки залишаються -->
               <div class="actions-grid">
                 <button class="action-btn" id="admin-manage-categories">
                   <i class="fas fa-sliders-h"></i>
@@ -280,6 +238,10 @@
                 <button class="action-btn" id="admin-change-password">
                   <i class="fas fa-key"></i>
                   <span>Змінити пароль</span>
+                </button>
+                <button class="action-btn" id="admin-view-orders">
+                  <i class="fas fa-shopping-bag"></i>
+                  <span>Переглянути замовлення</span>
                 </button>
               </div>
             </div>
@@ -321,6 +283,27 @@
           </div>
           <div class="favorites-grid" id="favorites-container">
             <!-- Favorite models will appear here -->
+          </div>
+        </section>
+
+        <!-- Cart Section -->
+        <section id="cart" class="cart-section hidden">
+          <div class="section-header">
+            <h2 class="section-title">Кошик</h2>
+            <button id="clear-cart" class="btn-text">Очистити кошик</button>
+          </div>
+          <div class="cart-empty" id="cart-empty">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Кошик порожній</h3>
+            <p>Додайте моделі, натискаючи кнопку "Замовити"</p>
+          </div>
+          <div class="cart-grid" id="cart-container">
+            <!-- Cart models will appear here -->
+          </div>
+          <div class="cart-footer" style="margin-top: 2rem; text-align: right">
+            <button id="checkout-btn" class="btn btn-primary">
+              <i class="fas fa-credit-card"></i> Оформити замовлення
+            </button>
           </div>
         </section>
       </div>
@@ -371,7 +354,7 @@
       </div>
     </div>
 
-    <!-- ===== НОВЕ МОДАЛЬНЕ ВІКНО: ДОДАТИ МОДЕЛЬ ===== -->
+    <!-- Modal for Add/Edit Model -->
     <div id="add-model-modal" class="modal">
       <div class="modal-content" style="max-width: 700px">
         <button class="modal-close">
@@ -597,7 +580,7 @@
       </div>
     </div>
 
-    <!-- ===== НОВЕ МОДАЛЬНЕ ВІКНО: ЗМІНИТИ ПАРОЛЬ ===== -->
+    <!-- Modal for Change Password -->
     <div id="change-password-modal" class="modal">
       <div class="modal-content" style="max-width: 500px">
         <button class="modal-close">
@@ -679,7 +662,7 @@
       </div>
     </div>
 
-    <!-- ===== МОДАЛЬНЕ ВІКНО: АВТОРИЗАЦІЯ ===== -->
+    <!-- Modal for Auth -->
     <div id="auth-modal" class="modal">
       <div class="modal-content" style="max-width: 500px">
         <button class="modal-close" id="auth-modal-close">
@@ -797,6 +780,98 @@
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Order Form -->
+    <div id="order-form-modal" class="modal">
+      <div class="modal-content" style="max-width: 500px">
+        <button class="modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-body">
+          <h2 class="modal-title">Оформлення замовлення</h2>
+          <p class="modal-description">Заповніть контактні дані для зв'язку</p>
+
+          <div class="auth-form">
+            <div class="form-group">
+              <label for="order-name" class="form-label">Ваше ім'я *</label>
+              <input
+                type="text"
+                id="order-name"
+                class="form-input"
+                placeholder="Ім'я"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="order-email" class="form-label">Email *</label>
+              <input
+                type="email"
+                id="order-email"
+                class="form-input"
+                placeholder="example@mail.com"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="order-phone" class="form-label">Телефон</label>
+              <input
+                type="tel"
+                id="order-phone"
+                class="form-input"
+                placeholder="+380..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="order-comment" class="form-label">Коментар</label>
+              <textarea
+                id="order-comment"
+                class="form-input"
+                rows="3"
+                placeholder="Додаткова інформація"
+              ></textarea>
+            </div>
+
+            <div
+              id="order-form-error"
+              class="error-message"
+              style="display: none"
+            ></div>
+            <div
+              id="order-form-success"
+              class="success-message"
+              style="display: none"
+            ></div>
+
+            <div class="form-actions">
+              <button id="order-submit-btn" class="btn btn-primary">
+                <i class="fas fa-check"></i> Підтвердити замовлення
+              </button>
+              <button id="order-cancel-btn" class="btn btn-secondary">
+                Скасувати
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Admin View Orders -->
+    <div id="orders-modal" class="modal">
+      <div class="modal-content" style="max-width: 600px">
+        <button class="modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-body">
+          <h2 class="modal-title">Список замовлень</h2>
+          <div id="orders-list" style="margin: 1rem 0">
+            <!-- Тут буде список замовлень -->
+            <p style="color: var(--text-secondary); text-align: center">
+              Немає нових замовлень
+            </p>
           </div>
         </div>
       </div>

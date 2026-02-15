@@ -168,14 +168,10 @@ const AuthEvents = {
         this.closeAddModelModal();
         this.resetEditModelForm();
         
-        // Оновити статистику
-        this.updateAdminStats();
-        
         // Оновити відображення моделей
         const state = StateManager.getState();
         if (state.currentSection === 'admin') {
-            // Якщо ми в адмін-панелі, оновити статистику
-            this.updateAdminStats();
+            // Якщо ми в адмін-панелі, нічого не робимо (статистика видалена)
         } else {
             // Якщо на головній, оновити відображення
             UIManager.renderModels();
@@ -743,7 +739,7 @@ const AuthEvents = {
                 `;
             }
             
-            this.updateAdminStats();
+            // Статистику більше не оновлюємо
             this.populateModelCategories();
         } else {
             StateManager.setCurrentSection('main');
@@ -1096,37 +1092,6 @@ const AuthEvents = {
         }, 100);
         
         Utils.showNotification('Резервна копія успішно створена та завантажена');
-    },
-
-    // Оновити статистику адмін-панелі
-    updateAdminStats() {
-        const state = StateManager.getState();
-        
-        const modelsCount = document.getElementById('stat-models-count');
-        if (modelsCount) {
-            modelsCount.textContent = state.models.length;
-        }
-        
-        const favoritesCount = document.getElementById('stat-favorites-count');
-        if (favoritesCount) {
-            favoritesCount.textContent = state.favorites.length;
-        }
-        
-        const categoriesCount = document.getElementById('stat-categories-count');
-        if (categoriesCount) {
-            categoriesCount.textContent = state.categories.length;
-        }
-        
-        const totalDownloads = document.getElementById('stat-total-downloads');
-        if (totalDownloads && state.models.length > 0) {
-            const total = state.models.reduce((sum, model) => {
-                const downloads = parseInt(model.downloads.replace('K', '000').replace(/[^0-9]/g, '')) || 0;
-                return sum + downloads;
-            }, 0);
-            totalDownloads.textContent = total > 1000 ? 
-                `${(total / 1000).toFixed(1)}K` : 
-                total.toLocaleString();
-        }
     }
 };
 

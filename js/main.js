@@ -1,4 +1,4 @@
-// js/main.js - головний файл (ОНОВЛЕНО - видалено глобальні сповіщення про помилки)
+// js/main.js - головний файл (ОНОВЛЕНО - видалено статистику)
 console.log('main.js запущено');
 
 // Статичні імпорти
@@ -73,6 +73,7 @@ async function initApp() {
         UIManager.renderCategories();
         UIManager.renderModels();
         UIManager.updateFavoritesCounter();
+        UIManager.updateCartCounter();
         
         // Встановити головну сторінку як активну
         StateManager.setCurrentSection('main');
@@ -84,19 +85,12 @@ async function initApp() {
         addAuthStyles();
         addShareStyles();
         
-        // 9. Оновити статистику адмін-панелі
-        updateAdminStats();
-        
-        // 10. Додати обробники для нових модальних вікон
-        setupModalHandlers();
-        
-        // 11. Ініціалізація додаткових функцій
+        // 9. Ініціалізація додаткових функцій
         initializeAdditionalFeatures();
         
         console.log('=== Додаток успішно ініціалізовано! ===');
     } catch (error) {
         console.error('Помилка ініціалізації додатка:', error);
-        // ВИДАЛЕНО: showErrorNotification('Помилка завантаження додатка. Перевірте консоль.');
         console.error('Помилка завантаження додатка:', error);
     }
 }
@@ -143,7 +137,6 @@ function addNotificationStyles() {
         .notification.warning {
             background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
         }
-        /* ВИДАЛЕНО: стилі для помилок - вони більше не показуються глобально */
     `;
     document.head.appendChild(style);
 }
@@ -316,7 +309,9 @@ function setupModalHandlers() {
         'change-password-modal',
         'auth-modal',
         'categories-modal',
-        'model-modal'
+        'model-modal',
+        'order-form-modal',
+        'orders-modal'
     ];
     
     modals.forEach(modalId => {
@@ -356,7 +351,6 @@ function initializeAdditionalFeatures() {
     // Перевірка підтримки Web Storage
     if (!window.localStorage) {
         console.warn('LocalStorage не підтримується. Деякі функції можуть не працювати.');
-        // ВИДАЛЕНО: Utils.showNotification('Ваш браузер не підтримує збереження даних. Рекомендуємо оновити браузер.', 'warning');
         console.warn('Ваш браузер не підтримує збереження даних. Рекомендуємо оновити браузер.');
     }
     
@@ -367,7 +361,6 @@ function initializeAdditionalFeatures() {
     
     window.addEventListener('offline', () => {
         console.log('Мережа: офлайн');
-        // ВИДАЛЕНО: Utils.showNotification('Ви в режимі офлайн. Деякі функції можуть бути обмежені.', 'warning');
         console.warn('Ви в режимі офлайн. Деякі функції можуть бути обмежені.');
     });
     
@@ -437,72 +430,6 @@ function registerServiceWorker() {
     }
 }
 
-// Оновити статистику адмін-панелі
-function updateAdminStats() {
-    setTimeout(() => {
-        const state = StateManager.getState();
-        
-        // Кількість моделей
-        const modelsCount = document.getElementById('stat-models-count');
-        if (modelsCount) {
-            modelsCount.textContent = state.models.length;
-        }
-        
-        // Кількість в обраному
-        const favoritesCount = document.getElementById('stat-favorites-count');
-        if (favoritesCount) {
-            favoritesCount.textContent = state.favorites.length;
-        }
-        
-        // Кількість категорій
-        const categoriesCount = document.getElementById('stat-categories-count');
-        if (categoriesCount) {
-            categoriesCount.textContent = state.categories.length;
-        }
-        
-        // Загальна кількість завантажень
-        const totalDownloads = document.getElementById('stat-total-downloads');
-        if (totalDownloads && state.models.length > 0) {
-            const total = state.models.reduce((sum, model) => {
-                const downloads = parseInt(model.downloads.replace('K', '000').replace(/[^0-9]/g, '')) || 0;
-                return sum + downloads;
-            }, 0);
-            totalDownloads.textContent = total > 1000 ? 
-                `${(total / 1000).toFixed(1)}K` : 
-                total.toLocaleString();
-        }
-        
-        // Оновити дату в адмін-привітанні
-        const adminWelcome = document.getElementById('admin-welcome');
-        if (adminWelcome && AuthSystem.isAuthenticated()) {
-            const authState = AuthSystem.getAuthState();
-            const lastActivity = authState.lastActivity ? 
-                new Date(authState.lastActivity).toLocaleString('uk-UA') : 
-                'тільки що';
-            adminWelcome.innerHTML = `
-                <h3>Ласкаво просимо до адмін-панелі!</h3>
-                <p>Остання активність: ${lastActivity}</p>
-                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                    Моделей: ${state.models.length} | Категорій: ${state.categories.length} | Обраних: ${state.favorites.length}
-                </p>
-            `;
-        }
-    }, 500);
-}
-
-// Функція для сповіщення про помилку - ВИДАЛЕНО (більше не використовується)
-// function showErrorNotification(message) {
-//     const notification = document.createElement('div');
-//     notification.className = 'notification error';
-//     notification.textContent = message;
-//     document.body.appendChild(notification);
-//     
-//     setTimeout(() => {
-//         notification.style.animation = 'slideOut 0.3s ease';
-//         setTimeout(() => notification.remove(), 300);
-//     }, 5000);
-// }
-
 // Функція для перевірки оновлень даних
 async function checkForUpdates() {
     try {
@@ -530,6 +457,7 @@ if (CONFIG.debugMode) {
         console.log('Моделі:', state.models.length);
         console.log('Категорії:', state.categories.length);
         console.log('Обране:', state.favorites.length);
+        console.log('Кошик:', state.cart.length);
         console.log('Поточна категорія:', state.currentCategory);
         console.log('Поточний фільтр:', state.currentFilter);
         console.log('Поточна секція:', state.currentSection);
@@ -565,7 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(error => {
             console.error('Помилка ініціалізації:', error);
             removeLoadingScreen();
-            // ВИДАЛЕНО: showErrorNotification('Критична помилка ініціалізації. Будь ласка, перезавантажте сторінку.');
             console.error('Критична помилка ініціалізації. Будь ласка, перезавантажте сторінку.', error);
         });
     }, 100);
@@ -577,7 +504,6 @@ window.addEventListener('error', (event) => {
     
     // Показати користувачеві дружнє повідомлення
     if (event.error && event.error.message && event.error.message.includes('fetch')) {
-        // ВИДАЛЕНО: showErrorNotification('Проблема з мережею. Перевірте підключення до інтернету.');
         console.error('Проблема з мережею. Перевірте підключення до інтернету.');
     }
 });
@@ -638,4 +564,4 @@ function removeLoadingScreen() {
 }
 
 // Експорт функцій для тестування (якщо потрібно)
-export { initApp, updateAdminStats };
+export { initApp };

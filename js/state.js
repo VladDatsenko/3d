@@ -1,4 +1,5 @@
 import { CONFIG } from './config.js';
+import { CartManager } from './cart.js';
 
 // Безпечне отримання з localStorage
 const getStoredFavorites = () => {
@@ -18,6 +19,7 @@ const state = {
     models: [],
     filteredModels: [],
     favorites: getStoredFavorites(),
+    cart: CartManager.loadCartFromStorage(), // завантажуємо кошик
     currentFilter: 'all',
     displayedCount: CONFIG.initialLoad,
     currentCategory: 'all',

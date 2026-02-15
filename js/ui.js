@@ -6,6 +6,7 @@ import { CategoriesManager } from './categories.js';
 import { Utils } from './utils.js';
 import { AVAILABLE_ICONS } from './constants.js';
 import { EventHandlers } from './events.js';
+import { CartManager } from './cart.js';
 
 // Функції для оновлення UI
 const UIManager = {
@@ -46,7 +47,7 @@ const UIManager = {
         const modelsToShow = StateManager.getDisplayedModels();
         
         DomElements.modelsContainer.innerHTML = modelsToShow.map(model => 
-            ModelsManager.createModelHTML(model)
+            ModelsManager.createModelHTML(model, false) // false = не в кошику
         ).join('');
         
         this.updateLoadMoreButton();
@@ -67,7 +68,25 @@ const UIManager = {
 
         DomElements.favoritesEmpty.classList.add('hidden');
         DomElements.favoritesContainer.innerHTML = favoriteModels.map(model => 
-            ModelsManager.createModelHTML(model)
+            ModelsManager.createModelHTML(model, false) // false = не в кошику
+        ).join('');
+    },
+
+    // Відобразити кошик
+    renderCart() {
+        if (!DomElements.cartContainer || !DomElements.cartEmpty) return;
+        
+        const cartModels = CartManager.getCartModels();
+        
+        if (cartModels.length === 0) {
+            DomElements.cartEmpty.classList.remove('hidden');
+            DomElements.cartContainer.innerHTML = '';
+            return;
+        }
+
+        DomElements.cartEmpty.classList.add('hidden');
+        DomElements.cartContainer.innerHTML = cartModels.map(model => 
+            ModelsManager.createModelHTML(model, true) // true = в кошику
         ).join('');
     },
 
@@ -85,6 +104,14 @@ const UIManager = {
         
         const state = StateManager.getState();
         DomElements.favCount.textContent = state.favorites.length;
+    },
+
+    // Оновити лічильник кошика
+    updateCartCounter() {
+        if (!DomElements.cartCount) return;
+        
+        const count = CartManager.getCartCount();
+        DomElements.cartCount.textContent = count;
     },
 
     // Оновити активність кнопок фільтрів
@@ -122,6 +149,9 @@ const UIManager = {
         if (DomElements.favoritesSection) {
             DomElements.favoritesSection.classList.add('hidden');
         }
+        if (DomElements.cartSection) {
+            DomElements.cartSection.classList.add('hidden');
+        }
         if (DomElements.adminSection) {
             DomElements.adminSection.classList.add('hidden');
         }
@@ -138,6 +168,11 @@ const UIManager = {
                     DomElements.favoritesSection.classList.remove('hidden');
                 }
                 break;
+            case 'cart':
+                if (DomElements.cartSection) {
+                    DomElements.cartSection.classList.remove('hidden');
+                }
+                break;
             case 'admin':
                 if (DomElements.adminSection) {
                     DomElements.adminSection.classList.remove('hidden');
@@ -148,6 +183,9 @@ const UIManager = {
         // Оновити відображення в залежності від секції
         if (section === 'favorites') {
             this.renderFavorites();
+        }
+        if (section === 'cart') {
+            this.renderCart();
         }
     },
 
@@ -197,8 +235,8 @@ const UIManager = {
         
         // Затримка для того, щоб модальне вікно повністю закрилося
         setTimeout(() => {
-            // Якщо ми на сторінці обраних - нічого не робимо
-            if (state.currentSection === 'favorites') {
+            // Якщо ми на сторінці обраних або кошика - нічого не робимо
+            if (state.currentSection === 'favorites' || state.currentSection === 'cart') {
                 return;
             }
             
@@ -264,6 +302,50 @@ const UIManager = {
         } else {
             document.body.classList.remove('dark-mode');
             document.body.classList.add('light-mode');
+        }
+    },
+
+    // Показати форму замовлення
+    showOrderFormModal() {
+        if (DomElements.orderFormModal) {
+            // Скинути попередні повідомлення
+            const errorEl = document.getElementById('order-form-error');
+            const successEl = document.getElementById('order-form-success');
+            if (errorEl) errorEl.style.display = 'none';
+            if (successEl) successEl.style.display = 'none';
+            
+            DomElements.orderFormModal.classList.add('show');
+            document.body.classList.add('modal-open');
+        }
+    },
+
+    // Закрити форму замовлення
+    closeOrderFormModal() {
+        if (DomElements.orderFormModal) {
+            DomElements.orderFormModal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+        }
+    },
+
+    // Показати модальне вікно замовлень (для адміна)
+    showOrdersModal() {
+        if (DomElements.ordersModal) {
+            // Тут можна завантажити список замовлень з localStorage
+            const ordersList = document.getElementById('orders-list');
+            if (ordersList) {
+                // Поки що заглушка
+                ordersList.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">Немає нових замовлень</p>';
+            }
+            DomElements.ordersModal.classList.add('show');
+            document.body.classList.add('modal-open');
+        }
+    },
+
+    // Закрити модальне вікно замовлень
+    closeOrdersModal() {
+        if (DomElements.ordersModal) {
+            DomElements.ordersModal.classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
     }
 };

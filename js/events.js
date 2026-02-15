@@ -7,6 +7,7 @@ import { ModelsManager } from './models.js';
 import { Utils } from './utils.js';
 import { AuthSystem } from './auth.js';
 import { AuthEvents } from './auth-events.js';
+import { CartManager } from './cart.js';
 
 // Обробники подій
 const EventHandlers = {
@@ -37,6 +38,7 @@ const EventHandlers = {
         this.setupShareButton();
         this.setupHashRouter();
         this.setupContextMenu();
+        this.setupCartEventListeners();
         
         console.log('Обробники подій успішно ініціалізовано');
     },
@@ -172,7 +174,7 @@ const EventHandlers = {
         this.hideContextMenu();
     },
 
-    // Налаштування кнопки адміна (тепер вхід/вихід в одній кнопці)
+    // Налаштування кнопки адміна
     setupAdminButton() {
         if (DomElements.adminCategoriesBtn) {
             // Оновлюємо іконку кнопки
@@ -223,6 +225,18 @@ const EventHandlers = {
             // Додаємо обробник ПРАВОЇ кнопки миші для обраного
             DomElements.favoritesContainer.addEventListener('contextmenu', (e) => {
                 this.handleModelCardRightClick(e, 'favorites');
+            });
+        }
+        
+        // Делегування подій для контейнера кошика
+        if (DomElements.cartContainer) {
+            DomElements.cartContainer.addEventListener('click', (e) => {
+                this.handleModelCardClick(e, 'cart');
+            });
+            
+            // Додаємо обробник ПРАВОЇ кнопки миші для кошика
+            DomElements.cartContainer.addEventListener('contextmenu', (e) => {
+                this.handleModelCardRightClick(e, 'cart');
             });
         }
         
@@ -299,6 +313,8 @@ const EventHandlers = {
         const favoriteBtn = target.closest('.favorite-btn');
         const detailsBtn = target.closest('.view-details');
         const downloadBtn = target.closest('.download-btn');
+        const orderBtn = target.closest('.order-btn');
+        const removeFromCartBtn = target.closest('.remove-from-cart-btn'); // нова кнопка
         const editBtn = target.closest('.edit-model-btn');
         const deleteBtn = target.closest('.delete-model-btn');
         const modelCard = target.closest('.model-card');
@@ -324,13 +340,45 @@ const EventHandlers = {
             return;
         }
         
-        // Кнопка "Завантаження"
+        // Кнопка "Завантаження" (тільки для адміна)
         if (downloadBtn) {
             e.stopPropagation();
             const modelId = downloadBtn.dataset.id;
             if (modelId) {
-                ModelsManager.downloadModel(modelId);
-                UIManager.renderModels(); // Оновити відображення
+                // Перевіряємо, чи адмін
+                if (AuthSystem.isAuthenticated()) {
+                    ModelsManager.downloadModel(modelId);
+                    UIManager.renderModels(); // Оновити відображення
+                } else {
+                    console.warn('Спроба завантажити без авторизації');
+                }
+            }
+            return;
+        }
+        
+        // Кнопка "Замовити" (для звичайних користувачів)
+        if (orderBtn) {
+            e.stopPropagation();
+            const modelId = orderBtn.dataset.id;
+            if (modelId) {
+                CartManager.addToCart(modelId);
+                UIManager.updateCartCounter();
+                // Якщо ми в секції кошика, перерендерити
+                if (StateManager.getState().currentSection === 'cart') {
+                    UIManager.renderCart();
+                }
+            }
+            return;
+        }
+        
+        // Кнопка "Видалити з кошика" (тільки в кошику)
+        if (removeFromCartBtn) {
+            e.stopPropagation();
+            const modelId = removeFromCartBtn.dataset.id;
+            if (modelId) {
+                CartManager.removeFromCart(modelId);
+                UIManager.updateCartCounter();
+                UIManager.renderCart(); // одразу перемальовуємо кошик
             }
             return;
         }
@@ -358,7 +406,7 @@ const EventHandlers = {
         }
         
         // ЛІВИЙ клік по картці моделі
-        if (modelCard && !favoriteBtn && !detailsBtn && !downloadBtn && !editBtn && !deleteBtn) {
+        if (modelCard && !favoriteBtn && !detailsBtn && !downloadBtn && !orderBtn && !removeFromCartBtn && !editBtn && !deleteBtn) {
             const modelId = modelCard.dataset.id;
             if (modelId) {
                 UIManager.showModelModal(modelId);
@@ -462,10 +510,15 @@ const EventHandlers = {
             // Оновити UI в залежності від того, де ми знаходимось
             UIManager.renderModels();
             UIManager.updateFavoritesCounter();
+            UIManager.updateCartCounter();
             
             // Якщо ми на сторінці обраних, перемалювати
             if (containerType === 'favorites' || StateManager.getState().currentSection === 'favorites') {
                 UIManager.renderFavorites();
+            }
+            // Якщо ми на сторінці кошика, перемалювати
+            if (containerType === 'cart' || StateManager.getState().currentSection === 'cart') {
+                UIManager.renderCart();
             }
             
             // Оновити статистику адмін-панелі
@@ -536,10 +589,12 @@ const EventHandlers = {
                     StateManager.setCurrentSection('main');
                     UIManager.toggleSections('main');
                     UIManager.updateNavigation('models');
+                    // Перерендерити моделі, щоб оновити кнопки (адмін/користувач)
+                    UIManager.renderModels();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     // Стандартна поведінка для не авторизованих
-                    if (state.currentSection === 'favorites') {
+                    if (state.currentSection === 'favorites' || state.currentSection === 'cart') {
                         StateManager.setCurrentSection('main');
                         UIManager.toggleSections('main');
                         UIManager.updateNavigation('models');
@@ -567,6 +622,19 @@ const EventHandlers = {
             });
         }
         
+        // Сторінка кошика
+        if (DomElements.cartLink) {
+            DomElements.cartLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                StateManager.setCurrentSection('cart');
+                UIManager.toggleSections('cart');
+                UIManager.updateNavigation('cart');
+                UIManager.updateCartCounter();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+        
         // Очищення обраного
         if (DomElements.clearFavoritesBtn) {
             DomElements.clearFavoritesBtn.addEventListener('click', () => {
@@ -579,6 +647,155 @@ const EventHandlers = {
                 }
             });
         }
+    },
+
+    // Налаштування обробників для кошика
+    setupCartEventListeners() {
+        // Очистити кошик
+        if (DomElements.clearCartBtn) {
+            DomElements.clearCartBtn.addEventListener('click', () => {
+                const confirmClear = confirm('Очистити кошик?');
+                if (confirmClear) {
+                    CartManager.clearCart();
+                    UIManager.updateCartCounter();
+                    UIManager.renderCart();
+                }
+            });
+        }
+
+        // Кнопка "Оформити замовлення"
+        if (DomElements.checkoutBtn) {
+            DomElements.checkoutBtn.addEventListener('click', () => {
+                const cartModels = CartManager.getCartModels();
+                if (cartModels.length === 0) {
+                    Utils.showNotification('Кошик порожній', 'warning');
+                    return;
+                }
+                UIManager.showOrderFormModal();
+            });
+        }
+
+        // Обробка форми замовлення
+        const orderSubmitBtn = document.getElementById('order-submit-btn');
+        if (orderSubmitBtn) {
+            orderSubmitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleOrderSubmit();
+            });
+        }
+
+        // Скасування форми замовлення
+        const orderCancelBtn = document.getElementById('order-cancel-btn');
+        if (orderCancelBtn) {
+            orderCancelBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                UIManager.closeOrderFormModal();
+            });
+        }
+
+        // Закриття модального вікна замовлення по кліку на фон
+        const orderModal = document.getElementById('order-form-modal');
+        if (orderModal) {
+            orderModal.addEventListener('click', (e) => {
+                if (e.target === orderModal) {
+                    UIManager.closeOrderFormModal();
+                }
+            });
+            // Додаємо обробник для кнопки закриття (хрестик)
+            const closeBtn = orderModal.querySelector('.modal-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    UIManager.closeOrderFormModal();
+                });
+            }
+        }
+
+        // Кнопка перегляду замовлень в адмінці
+        const viewOrdersBtn = document.getElementById('admin-view-orders');
+        if (viewOrdersBtn) {
+            viewOrdersBtn.addEventListener('click', () => {
+                UIManager.showOrdersModal();
+            });
+        }
+
+        // Закриття модального вікна замовлень
+        const ordersModal = document.getElementById('orders-modal');
+        if (ordersModal) {
+            const closeBtn = ordersModal.querySelector('.modal-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    UIManager.closeOrdersModal();
+                });
+            }
+            ordersModal.addEventListener('click', (e) => {
+                if (e.target === ordersModal) {
+                    UIManager.closeOrdersModal();
+                }
+            });
+        }
+    },
+
+    // Обробка відправки форми замовлення
+    handleOrderSubmit() {
+        const name = document.getElementById('order-name').value.trim();
+        const email = document.getElementById('order-email').value.trim();
+        const phone = document.getElementById('order-phone').value.trim();
+        const comment = document.getElementById('order-comment').value.trim();
+        const errorEl = document.getElementById('order-form-error');
+        const successEl = document.getElementById('order-form-success');
+
+        // Валідація
+        if (!name || !email) {
+            if (errorEl) {
+                errorEl.textContent = 'Будь ласка, заповніть ім\'я та email';
+                errorEl.style.display = 'block';
+            }
+            return;
+        }
+
+        // Отримати моделі з кошика
+        const cartModels = CartManager.getCartModels();
+        const orderData = {
+            id: Date.now().toString(),
+            date: new Date().toISOString(),
+            customer: { name, email, phone, comment },
+            items: cartModels.map(m => ({ id: m.id, title: m.title, price: '0' })), // ціна поки не використовується
+            totalItems: cartModels.length
+        };
+
+        // Зберегти замовлення в localStorage (для адміна)
+        try {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            orders.push(orderData);
+            localStorage.setItem('orders', JSON.stringify(orders));
+        } catch (e) {
+            console.error('Помилка збереження замовлення:', e);
+        }
+
+        // Очистити кошик
+        CartManager.clearCart();
+        UIManager.updateCartCounter();
+        UIManager.renderCart();
+
+        // Показати успіх
+        if (successEl) {
+            successEl.textContent = 'Замовлення прийнято! Ми зв\'яжемося з вами найближчим часом.';
+            successEl.style.display = 'block';
+        }
+        if (errorEl) {
+            errorEl.style.display = 'none';
+        }
+
+        // Приховати форму через 2 секунди
+        setTimeout(() => {
+            UIManager.closeOrderFormModal();
+            // Скинути форму
+            document.getElementById('order-name').value = '';
+            document.getElementById('order-email').value = '';
+            document.getElementById('order-phone').value = '';
+            document.getElementById('order-comment').value = '';
+            if (successEl) successEl.style.display = 'none';
+        }, 2000);
     },
 
     // Налаштування модальних вікон
@@ -713,6 +930,18 @@ const EventHandlers = {
                 if (changePasswordModal && changePasswordModal.classList.contains('show')) {
                     changePasswordModal.classList.remove('show');
                     document.body.classList.remove('modal-open');
+                }
+                
+                // Закрити форму замовлення
+                const orderFormModal = document.getElementById('order-form-modal');
+                if (orderFormModal && orderFormModal.classList.contains('show')) {
+                    UIManager.closeOrderFormModal();
+                }
+                
+                // Закрити модальне вікно замовлень
+                const ordersModal = document.getElementById('orders-modal');
+                if (ordersModal && ordersModal.classList.contains('show')) {
+                    UIManager.closeOrdersModal();
                 }
                 
                 // Закрити контекстне меню
@@ -861,9 +1090,9 @@ const EventHandlers = {
             return;
         }
         
-        // Якщо ми на сторінці обраних, не змінюємо секцію
+        // Якщо ми на сторінці обраних або кошика, не змінюємо секцію
         const state = StateManager.getState();
-        if (state.currentSection !== 'favorites') {
+        if (state.currentSection !== 'favorites' && state.currentSection !== 'cart') {
             StateManager.setCurrentSection('main');
             UIManager.toggleSections('main');
             UIManager.updateNavigation('main');
@@ -876,16 +1105,27 @@ const EventHandlers = {
     // Додати обробники для модального вікна моделі
     attachModalEventListeners(modelId) {
         setTimeout(() => {
-            // Кнопка завантаження в модальному вікні
+            // Кнопка завантаження в модальному вікні (тільки для адміна)
             const modalDownloadBtn = DomElements.modalBody?.querySelector('.download-btn');
             if (modalDownloadBtn && modalDownloadBtn.dataset && modalDownloadBtn.dataset.id) {
                 modalDownloadBtn.addEventListener('click', () => {
-                    ModelsManager.downloadModel(modelId);
-                    // Оновити модальне вікно, щоб показати нову кількість завантажень
-                    setTimeout(() => {
-                        UIManager.showModelModal(modelId);
-                        this.attachModalEventListeners(modelId);
-                    }, 100);
+                    if (AuthSystem.isAuthenticated()) {
+                        ModelsManager.downloadModel(modelId);
+                        // Оновити модальне вікно, щоб показати нову кількість завантажень
+                        setTimeout(() => {
+                            UIManager.showModelModal(modelId);
+                            this.attachModalEventListeners(modelId);
+                        }, 100);
+                    }
+                });
+            }
+            
+            // Кнопка замовлення в модальному вікні
+            const modalOrderBtn = DomElements.modalBody?.querySelector('.order-btn');
+            if (modalOrderBtn && modalOrderBtn.dataset && modalOrderBtn.dataset.id) {
+                modalOrderBtn.addEventListener('click', () => {
+                    CartManager.addToCart(modelId);
+                    UIManager.updateCartCounter();
                 });
             }
             
